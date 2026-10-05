@@ -1,9 +1,7 @@
-@(
-".env",
-".env.*",
-"!.env.example",
-"__pycache__/",
-"*.pyc",
-".venv/",
-".pytest_cache/"
-) | Set-Content -Encoding ascii .gitignore
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
