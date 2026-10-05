@@ -2,6 +2,7 @@
 python eval/run_eval.py
 Results are cached in eval/cache.json; delete it to re-call the API.
 """
+import hashlib
 import json
 import os
 import sys
@@ -17,8 +18,8 @@ import analyzer  # noqa: E402
 import rules  # noqa: E402
 
 DATASET = ROOT / "dataset.json"
-CACHE = ROOT / "cache.json"
-RESULTS = ROOT / "results.md"
+CACHE_FILES = {"test": ROOT / "cache.json", "dev": ROOT / "cache_dev.json"}
+RESULTS_FILES = {"test": ROOT / "results.md", "dev": ROOT / "results_dev.md"}
 RULES_THRESHOLD = 40
 DELAY_SECONDS = 1.0
 FLAGGED = {"likely scam", "suspicious"}
@@ -27,6 +28,18 @@ CONFIGS = ("rules-only", "model-only", "hybrid")
 
 def load_json(path: Path, default: object) -> object:
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else default
+
+
+def digest(*parts: str) -> str:
+    return hashlib.sha256("\x00".join(parts).encode()).hexdigest()[:12]
+
+
+def versions() -> dict[str, str]:
+    """Cache version per config. model-only ignores rules.py so rules edits don't invalidate it."""
+    rules_hash = digest((ROOT.parent / "rules.py").read_text(encoding="utf-8"))
+    prompt_hash = digest(analyzer.build_prompt(""))  # covers INSTRUCTIONS + template
+    return {"rules-only": rules_hash, "model-only": prompt_hash,
+            "hybrid": digest(rules_hash, prompt_hash)}
 
 
 def rules_only(text: str, client: OpenAI | None) -> dict:
@@ -53,10 +66,11 @@ def hybrid(text: str, client: OpenAI | None) -> dict:
 RUNNERS = {"rules-only": rules_only, "model-only": model_only, "hybrid": hybrid}
 
 
-def run_all(messages: list[dict], client: OpenAI | None) -> dict:
-    cache = load_json(CACHE, {})
+def run_all(messages: list[dict], client: OpenAI | None, cache_path: Path) -> None:
+    cache = load_json(cache_path, {})
+    version_of = versions()
     for config in CONFIGS:
-        store = cache.setdefault(config, {})
+        store = cache.setdefault(config, {}).setdefault(version_of[config], {})
         for i, msg in enumerate(messages, 1):
             if msg["id"] in store and "error" not in store[msg["id"]]:
                 continue
@@ -66,10 +80,9 @@ def run_all(messages: list[dict], client: OpenAI | None) -> dict:
                 store[msg["id"]] = {"error": f"{type(exc).__name__}: {exc}"}
             status = "ERROR" if "error" in store[msg["id"]] else "ok"
             print(f"{i}/{len(messages)} {config} {status}", flush=True)
-            CACHE.write_text(json.dumps(cache, indent=2), encoding="utf-8")
+            cache_path.write_text(json.dumps(cache, indent=2), encoding="utf-8")
             if config != "rules-only":
                 time.sleep(DELAY_SECONDS)
-    return cache
 
 
 def metrics(messages: list[dict], store: dict) -> dict:
@@ -96,12 +109,13 @@ def metrics(messages: list[dict], store: dict) -> dict:
             "precision": precision, "recall": recall, "f1": f1}
 
 
-def render(messages: list[dict], cache: dict) -> str:
-    test = [m for m in messages if m["split"] == "test"]
-    results = {c: metrics(test, cache.get(c, {})) for c in CONFIGS}
+def render(messages: list[dict], cache: dict, split: str) -> str:
+    test = [m for m in messages if m["split"] == split]
+    version_of = versions()
+    results = {c: metrics(test, cache.get(c, {}).get(version_of[c], {})) for c in CONFIGS}
     model = os.getenv("FEATHERLESS_MODEL") or analyzer.DEFAULT_MODEL
     lines = ["# Second Look: Evaluation Results", "",
-             f"Test split: {len(test)} messages ({sum(m['label'] == 'scam' for m in test)} scam, "
+             f"{split.capitalize()} split: {len(test)} messages ({sum(m['label'] == 'scam' for m in test)} scam, "
              f"{sum(m['label'] == 'legit' for m in test)} legitimate). Model: `{model}`. "
              f"Rules threshold: score >= {RULES_THRESHOLD}. "
              "\"likely scam\" and \"suspicious\" count as flagged.", "",
@@ -128,15 +142,20 @@ def main() -> None:
     load_dotenv()
     if not DATASET.exists():
         sys.exit(f"Dataset not found: {DATASET}")
+    split = sys.argv[sys.argv.index("--split") + 1] if "--split" in sys.argv else "test"
+    if split not in CACHE_FILES:
+        sys.exit("--split must be 'dev' or 'test'")
     messages = load_json(DATASET, [])
+    if "--split" in sys.argv:  # only touch the chosen split
+        messages = [m for m in messages if m["split"] == split]
     try:
         if "--from-cache" not in sys.argv:
             key = os.getenv("FEATHERLESS_API_KEY")
             client = OpenAI(base_url=analyzer.BASE_URL, api_key=key) if key else None
-            run_all(messages, client)
+            run_all(messages, client, CACHE_FILES[split])
     finally:  # always write results.md, even after Ctrl-C or a crash
-        report = render(messages, load_json(CACHE, {}))
-        RESULTS.write_text(report, encoding="utf-8")
+        report = render(messages, load_json(CACHE_FILES[split], {}), split)
+        RESULTS_FILES[split].write_text(report, encoding="utf-8")
         print(report)
 
 
