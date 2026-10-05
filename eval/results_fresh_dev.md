@@ -6,9 +6,9 @@ Dev split: 50 messages (22 scam, 28 legitimate). Model: `Qwen/Qwen3-32B`. Rules 
 |---|---|---|---|---|---|
 | rules-only | 58% | 100% | 5% | 0.09 | 0 |
 | model-only | 94% | 95% | 90% | 0.92 | 3 |
-| hybrid | 93% | 94% | 88% | 0.91 | 5 |
+| hybrid | 92% | 95% | 86% | 0.90 | 0 |
 
-Errors per configuration: rules-only 0, model-only 3, hybrid 5.
+Errors per configuration: rules-only 0, model-only 3, hybrid 0.
 
 ## rules-only
 
@@ -54,9 +54,10 @@ Errors per configuration: rules-only 0, model-only 3, hybrid 5.
 
 | | Predicted scam | Predicted legit |
 |---|---|---|
-| **Actually scam** | 15 | 2 |
+| **Actually scam** | 19 | 3 |
 | **Actually legit** | 1 | 27 |
 
 - **f06** (false alarm, verdict: *likely scam*): hey sorry to chase, can you send me your half of the Airbnb? it was £86.50. my sort code is in our old chat. cheers!
 - **f36** (missed scam, verdict: *likely safe*): Hi, sorry to message out of the blue. I saw your profile and honestly you seem like the kindest person. I'm on a rig off Norway for another month with bad signal but I think about you every day. Can I call you tonight?
 - **f41** (missed scam, verdict: *likely safe*): Hi, is this Kevin? We met at Danielle's party last week. Sorry if I have the wrong number!
+- **f42** (missed scam, verdict: *likely safe*): Hello, I think I have the wrong number but you sound like a lovely person. I'm Anna, I'm new in town. Do you mind if we chat? I'd love a friend.
