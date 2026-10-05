@@ -1,6 +1,6 @@
 """Evaluate rules-only, model-only and hybrid on eval/dataset.json. Run from the repo root:
-python eval/run_eval.py
-Results are cached in eval/cache.json; delete it to re-call the API.
+python eval/run_eval.py [--dataset PATH] [--split dev|test] [--from-cache]
+Results are cached in eval/cache.json (other datasets: cache_<name>.json); delete it to re-call the API.
 """
 import hashlib
 import json
@@ -17,9 +17,15 @@ sys.path.insert(0, str(ROOT.parent))
 import analyzer  # noqa: E402
 import rules  # noqa: E402
 
-DATASET = ROOT / "dataset.json"
-CACHE_FILES = {"test": ROOT / "cache.json", "dev": ROOT / "cache_dev.json"}
-RESULTS_FILES = {"test": ROOT / "results.md", "dev": ROOT / "results_dev.md"}
+DEFAULT_DATASET = ROOT / "dataset.json"
+SPLITS = ("test", "dev")
+
+
+def output_paths(dataset: Path, split: str) -> tuple[Path, Path]:
+    """(cache, results) paths. The default dataset keeps the original names; others get its stem."""
+    tag = "" if dataset == DEFAULT_DATASET else f"_{dataset.stem}"
+    suffix = "" if split == "test" else "_dev"
+    return ROOT / f"cache{tag}{suffix}.json", ROOT / f"results{tag}{suffix}.md"
 RULES_THRESHOLD = 40
 DELAY_SECONDS = 1.0
 FLAGGED = {"likely scam", "suspicious"}
@@ -140,22 +146,24 @@ def render(messages: list[dict], cache: dict, split: str) -> str:
 
 def main() -> None:
     load_dotenv()
-    if not DATASET.exists():
-        sys.exit(f"Dataset not found: {DATASET}")
+    dataset = Path(sys.argv[sys.argv.index("--dataset") + 1]).resolve() if "--dataset" in sys.argv else DEFAULT_DATASET
+    if not dataset.exists():
+        sys.exit(f"Dataset not found: {dataset}")
     split = sys.argv[sys.argv.index("--split") + 1] if "--split" in sys.argv else "test"
-    if split not in CACHE_FILES:
+    if split not in SPLITS:
         sys.exit("--split must be 'dev' or 'test'")
-    messages = load_json(DATASET, [])
+    cache_path, results_path = output_paths(dataset, split)
+    messages = load_json(dataset, [])
     if "--split" in sys.argv:  # only touch the chosen split
         messages = [m for m in messages if m["split"] == split]
     try:
         if "--from-cache" not in sys.argv:
             key = os.getenv("FEATHERLESS_API_KEY")
             client = OpenAI(base_url=analyzer.BASE_URL, api_key=key) if key else None
-            run_all(messages, client, CACHE_FILES[split])
+            run_all(messages, client, cache_path)
     finally:  # always write results.md, even after Ctrl-C or a crash
-        report = render(messages, load_json(CACHE_FILES[split], {}), split)
-        RESULTS_FILES[split].write_text(report, encoding="utf-8")
+        report = render(messages, load_json(cache_path, {}), split)
+        results_path.write_text(report, encoding="utf-8")
         print(report)
 
 
