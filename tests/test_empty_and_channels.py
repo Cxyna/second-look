@@ -15,7 +15,7 @@ def test_uk_reports_to_report_fraud_not_action_fraud() -> None:
 def test_blank_message_shows_notice_and_skips_model(monkeypatch) -> None:
     calls: list[str] = []
     monkeypatch.setattr(analyzer, "analyze", lambda m: calls.append(m))
-    at = AppTest.from_file("../app.py").run()
+    at = AppTest.from_file("../pages_/check.py").run()
     at.text_area(key="message").set_value("   ").run()
     at.button[-1].click().run()  # the Analyze button is the last button
     assert [w.value for w in at.warning] == ["Paste a message first."]
