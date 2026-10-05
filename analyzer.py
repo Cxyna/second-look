@@ -1,6 +1,8 @@
 import json
 import os
 import re
+import sys
+import time
 
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -14,6 +16,9 @@ ESCALATE_SCORE = 70
 SUSPICIOUS_SCORE = 20
 TIMEOUT_SECONDS = 60
 MAX_RETRIES = 1
+MAX_ATTEMPTS = 3
+RETRY_DELAY_SECONDS = 2
+DEBUG_REPLY_CHARS = 300
 THINK_RE = re.compile(r"<think>.*?</think>", re.DOTALL)
 
 INSTRUCTIONS = (
@@ -43,14 +48,15 @@ def build_prompt(text: str) -> str:
     return f"{INSTRUCTIONS}\n\n<message>\n{safe_text}\n</message>"
 
 
-def call_model(client: OpenAI, prompt: str) -> str:
+def call_model(client: OpenAI, prompt: str) -> tuple[str, str]:
     """The only place that talks to the model; swap this to change providers."""
     limited = client.with_options(timeout=TIMEOUT_SECONDS, max_retries=MAX_RETRIES)
     response = limited.chat.completions.create(
         model=os.getenv("FEATHERLESS_MODEL") or DEFAULT_MODEL,
         messages=[{"role": "user", "content": prompt}],
     )
-    return response.choices[0].message.content or ""
+    choice = response.choices[0]
+    return choice.message.content or "", str(choice.finish_reason)
 
 
 def parse_reply(raw: str) -> dict | None:
@@ -64,6 +70,40 @@ def parse_reply(raw: str) -> dict | None:
         if isinstance(data, dict) and data.get("verdict") in VERDICTS:
             return data
     return None
+
+
+def _parse_failure_category(raw: str, finish_reason: str) -> str:
+    """Category only; never includes any reply text."""
+    if not raw.strip():
+        return f"empty reply (finish_reason={finish_reason})"
+    if finish_reason == "length":
+        return "reply cut off (finish_reason=length)"
+    return f"no valid JSON verdict (finish_reason={finish_reason})"
+
+
+def _debug_print_reply(raw: str) -> None:
+    # Dev-only: terminal (stderr) only, never logged or written to a file.
+    if os.getenv("SECOND_LOOK_DEBUG") == "1":
+        print(f"[SECOND_LOOK_DEBUG] raw reply: {raw[:DEBUG_REPLY_CHARS]!r}", file=sys.stderr)
+
+
+def _query_model(client: OpenAI, prompt: str) -> tuple[dict | None, str]:
+    """Up to MAX_ATTEMPTS tries; API errors and parse failures both retry."""
+    category = ""
+    for attempt in range(MAX_ATTEMPTS):
+        if attempt:
+            time.sleep(RETRY_DELAY_SECONDS)
+        try:
+            raw, finish_reason = call_model(client, prompt)
+        except Exception as exc:  # network, auth, rate limit: never crash the app
+            category = f"API error ({type(exc).__name__})"
+            continue
+        parsed = parse_reply(raw)
+        if parsed:
+            return parsed, ""
+        _debug_print_reply(raw)
+        category = _parse_failure_category(raw, finish_reason)
+    return None, category
 
 
 def _rules_only_verdict(score: int) -> str:
@@ -99,13 +139,12 @@ def analyze(text: str, client: OpenAI | None = None) -> dict:
         client = OpenAI(base_url=BASE_URL, api_key=key)
 
     prompt = build_prompt(text)
-    try:
-        # ponytail: one retry only; add backoff if the API proves flaky
-        parsed = next((p for p in (parse_reply(call_model(client, prompt)) for _ in range(2)) if p), None)
-    except Exception as exc:  # network, auth, rate limit: never crash the app
-        return _rules_only(rule_results, f"Model call failed ({type(exc).__name__}); showing rule-based results only.")
+    parsed, category = _query_model(client, prompt)
     if parsed is None:
-        return _rules_only(rule_results, "Model returned invalid output twice; showing rule-based results only.")
+        return _rules_only(
+            rule_results,
+            f"Model failed after {MAX_ATTEMPTS} attempts: {category}; showing rule-based results only.",
+        )
 
     verdict = parsed["verdict"]
     if verdict == "likely safe" and rule_results["score"] >= ESCALATE_SCORE:
