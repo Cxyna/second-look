@@ -2,12 +2,45 @@ import re
 from difflib import SequenceMatcher
 from urllib.parse import urlparse
 
-URL_RE = re.compile(r"(?:https?://|www\.)[^\s<>\"']+", re.IGNORECASE)
+_BARE_TLD_PATTERN = (
+    "co.uk|com|net|org|top|xyz|info|biz|io|ly|gl|co|me|uk|gov|online|site|club|click|link|support|help"
+    "|app|shop|store|vip|live|work|cc|tk|ru|de|cn|buzz|icu|cfd|us|ca"
+).replace(".", r"\.")
+URL_RE = re.compile(
+    r"(?:https?://|www\.)[^\s<>\"']+"
+    # bare domain: known TLD, or any TLD followed by a /path
+    rf"|(?<![\w@./-])(?:[a-z0-9-]+\.)+(?:(?-i:{_BARE_TLD_PATTERN})(?![\w-])|[a-z]{{2,}}(?=/))[^\s<>\"']*",
+    re.IGNORECASE,
+)
 TRAILING_PUNCT = ".,;:!?)]}"
 SHORTENERS = {"bit.ly", "tinyurl.com", "t.co", "goo.gl", "is.gd", "ow.ly"}
-BRANDS = ("amazon", "paypal", "google", "apple", "microsoft", "netflix")
+# brand -> its real registered domains (never flagged)
+BRANDS: dict[str, set[str]] = {
+    "usps": {"usps.com", "usps.gov"},
+    "ups": {"ups.com"},
+    "dhl": {"dhl.com", "dhl.de", "dhl.co.uk"},
+    "fedex": {"fedex.com"},
+    "evri": {"evri.com"},
+    "royalmail": {"royalmail.com"},
+    "barclays": {"barclays.co.uk", "barclays.com"},
+    "lloyds": {"lloydsbank.com", "lloydsbank.co.uk", "lloydsbankinggroup.com"},
+    "hsbc": {"hsbc.com", "hsbc.co.uk"},
+    "natwest": {"natwest.com"},
+    "chase": {"chase.com"},
+    "wellsfargo": {"wellsfargo.com"},
+    "hmrc": {"hmrc.gov.uk"},
+    "irs": {"irs.gov"},
+    "dvla": {"dvla.gov.uk"},
+    "netflix": {"netflix.com"},
+    "paypal": {"paypal.com", "paypal.co.uk", "paypal.me", "paypal.de"},
+    "amazon": {"amazon.com", "amazon.co.uk", "amazon.ca", "amazon.de", "amazon.in", "amazon.com.au", "amazon.fr"},
+    "apple": {"apple.com"},
+    "microsoft": {"microsoft.com", "microsoftonline.com"},
+    "google": {"google.com", "google.co.uk", "google.ca", "google.de"},
+}
+TYPO_MIN_LEN = 5  # shorter brands (ups, irs, dhl) match exactly only
 DIGIT_FIX = str.maketrans("013", "ole")
-SECOND_LEVEL_SUFFIXES = {"co.uk", "com.au", "co.jp", "com.br"}
+SECOND_LEVEL_SUFFIXES = {"co.uk", "gov.uk", "com.au", "co.jp", "com.br"}
 TYPO_RATIO = 0.8
 LOOKALIKE_POINTS = 40
 SHORTENER_POINTS = 25
@@ -35,7 +68,10 @@ def is_shortener(url: str) -> bool:
 
 def _is_typo_of(label: str, brand: str) -> bool:
     fixed = label.translate(DIGIT_FIX)
-    return fixed == brand or SequenceMatcher(None, fixed, brand).ratio() > TYPO_RATIO
+    if fixed == brand:
+        return True
+    # same length only: substitutions are typos, brand+"s" is not
+    return len(fixed) == len(brand) >= TYPO_MIN_LEN and SequenceMatcher(None, fixed, brand).ratio() > TYPO_RATIO
 
 
 def lookalike_domain(url: str) -> str | None:
@@ -47,10 +83,12 @@ def lookalike_domain(url: str) -> str | None:
         return None
     name = labels[-suffix_len - 1]
     subdomains = labels[: -suffix_len - 1]
-    if name in BRANDS:
+    registered = ".".join(labels[-suffix_len - 1 :])
+    if any(registered in domains for domains in BRANDS.values()):
         return None
+    parts = name.split("-")
     for brand in BRANDS:
-        if brand in subdomains or any(_is_typo_of(p, brand) for p in name.split("-")):
+        if brand in subdomains or any(_is_typo_of(p, brand) for p in parts):
             return brand
     return None
 

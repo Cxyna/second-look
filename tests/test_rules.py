@@ -157,3 +157,87 @@ def test_run_rules_duplicate_urls_counted_once():
     result = run_rules("https://bit.ly/a https://bit.ly/a https://bit.ly/a")
     assert result["urls"] == ["https://bit.ly/a"]
     assert result["score"] == 25
+
+
+def test_extract_urls_bare_domains():
+    text = "visit usps-package-hold.top/update or bit.ly/3xEvriPay or goo.gl/Xk29Ls now"
+    assert extract_urls(text) == [
+        "usps-package-hold.top/update",
+        "bit.ly/3xEvriPay",
+        "goo.gl/Xk29Ls",
+    ]
+
+
+def test_extract_urls_bare_common_tld_and_co_uk():
+    assert extract_urls("go to example.co.uk, or foo.com.") == ["example.co.uk", "foo.com"]
+
+
+def test_extract_urls_ignores_ordinary_text():
+    assert extract_urls("Use e.g. a card, i.e. 3.50 or file.txt. Hi.There") == []
+
+
+def test_extract_urls_ignores_email_domain():
+    assert extract_urls("mail john.smith@gmail.com") == []
+
+
+def test_shortener_bare_domain_scores():
+    assert run_rules("pay at goo.gl/Xk29Ls")["shorteners"] == ["goo.gl/Xk29Ls"]
+
+
+def test_lookalike_brand_in_unrelated_domain():
+    assert lookalike_domain("amazon-account-verify.top") == "amazon"
+    assert lookalike_domain("https://usps-package-hold.top/update") == "usps"
+    assert lookalike_domain("https://chase-secure.net") == "chase"
+    assert lookalike_domain("https://royalmail-redelivery.com") == "royalmail"
+    assert lookalike_domain("https://hmrc.gov.uk.evil.io") == "hmrc"
+    assert lookalike_domain("https://paypal.xyz") == "paypal"
+
+
+def test_lookalike_real_brand_domains_not_flagged():
+    for url in (
+        "https://www.chase.com/login", "https://barclays.co.uk", "https://www.hmrc.gov.uk/x",
+        "https://irs.gov", "https://amazon.com", "https://nike.com", "https://bestbuy.com",
+        "https://tracking.dhl.com", "https://www.lloydsbank.com", "https://dvla.gov.uk",
+    ):
+        assert lookalike_domain(url) is None, url
+
+
+def test_short_brand_names_not_substring_matched():
+    assert lookalike_domain("https://groups.com") is None
+    assert lookalike_domain("https://cups.org") is None
+
+
+def test_run_rules_legit_messages_with_real_links_score_zero():
+    for msg in (
+        "Your Chase statement is ready: chase.com/statements",
+        "Refund details at www.hmrc.gov.uk/refunds",
+        "Track at amazon.com/orders or barclays.co.uk/help. Total 3.50, e.g. cash",
+        "Shoes at nike.com and deals at bestbuy.com/deals",
+    ):
+        assert run_rules(msg)["score"] == 0, msg
+
+
+def test_run_rules_bare_domain_scam_scores():
+    assert run_rules("Parcel held: usps-package-hold.top/update")["score"] >= 40
+
+
+def test_extract_urls_scam_tlds_without_path():
+    assert extract_urls("see paypal-secure.app and usps-hold.shop") == [
+        "paypal-secure.app",
+        "usps-hold.shop",
+    ]
+
+
+def test_extract_urls_ignores_missing_space_prose():
+    assert extract_urls("done.Help ok.Link Thanks.Me see.Top") == []
+
+
+def test_lookalike_regional_real_domains_not_flagged():
+    for url in ("https://amazon.de", "https://www.amazon.in", "https://google.ca",
+                "https://paypal.de", "https://login.microsoftonline.com"):
+        assert lookalike_domain(url) is None, url
+
+
+def test_lookalike_plural_not_treated_as_typo():
+    assert lookalike_domain("https://apples.com") is None
+    assert lookalike_domain("https://googles.com") is None
