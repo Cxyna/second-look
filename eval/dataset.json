@@ -1,0 +1,482 @@
+[
+  {
+    "id": "s01",
+    "text": "Royal Mail: We attempted to deliver your parcel today but it was undersized postage. Pay a £1.45 redelivery fee at royalmail-redelivery.info/pay or your parcel will be returned.",
+    "label": "scam",
+    "scam_type": "parcel_delivery_fee",
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "s02",
+    "text": "USPS: Your package 9400 1000 0000 0000 0000 00 is on hold due to an incomplete address. Update within 12 hours: usps-package-hold.top/update",
+    "label": "scam",
+    "scam_type": "parcel_delivery_fee",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s03",
+    "text": "Evri: Your parcel is waiting. A customs fee of £2.99 is due before we can deliver. Pay now: bit.ly/3xEvriPay",
+    "label": "scam",
+    "scam_type": "parcel_delivery_fee",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s04",
+    "text": "FedEx notice: delivery to Dana Whitfield failed. Confirm your address and pay the $1.89 handling charge at fedex-delivery-confirm.com or the item will be destroyed.",
+    "label": "scam",
+    "scam_type": "parcel_delivery_fee",
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "s05",
+    "text": "Barclays Fraud Team: Unusual activity on your account. A payment of £850 to J. Marlow is pending. If this wasn't you, log in at barclays-secure-verify.co to cancel.",
+    "label": "scam",
+    "scam_type": "bank_impersonation",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s06",
+    "text": "Chase Alert: Your debit card has been locked after a suspicious $640 charge. Verify your identity now at chase-cardsecurity.net/unlock to restore access.",
+    "label": "scam",
+    "scam_type": "bank_impersonation",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s07",
+    "text": "This is Mark from Lloyds fraud department. Your account is compromised. For your safety, move your savings into a new safe account, sort code 04-00-99, account 12345678. Do not tell branch staff.",
+    "label": "scam",
+    "scam_type": "bank_impersonation",
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "s08",
+    "text": "Hi Priya, it's Graham. I'm stuck in a meeting and can't talk. I need 5 x $100 Amazon gift cards for a client today. Buy them and send me the codes by text. I'll reimburse you. Keep it quiet for now.",
+    "label": "scam",
+    "scam_type": "fake_boss_gift_card",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s09",
+    "text": "Hello Tom, this is your MD, Susan Hale. Are you at your desk? I need you to do something urgent and discreet. Reply asap, I'm on my personal number as my work phone is dead.",
+    "label": "scam",
+    "scam_type": "fake_boss_gift_card",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s10",
+    "text": "Morning Alex, can you pick up £500 of iTunes vouchers on the company card? It's a surprise for a client. Scratch off and send me photos of the codes, I'm in back-to-back calls.",
+    "label": "scam",
+    "scam_type": "fake_boss_gift_card",
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "s11",
+    "text": "Mum it's me, I dropped my phone in the loo and this is my new number. I'm in trouble, I need £400 sent to a friend right now for a bill. Please don't call, just transfer. I'll explain later.",
+    "label": "scam",
+    "scam_type": "family_emergency",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s12",
+    "text": "Grandma, it's Tyler. I was in a car accident and I'm at the police station. I need $2,500 for bail. Please don't tell Mom and Dad. A lawyer will call you with where to wire it.",
+    "label": "scam",
+    "scam_type": "family_emergency",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s13",
+    "text": "Hi dad, my phone screen is smashed so I'm texting from a mate's. I'm stuck abroad and lost my wallet. Can you send £300 by gift card? So embarrassed, please hurry.",
+    "label": "scam",
+    "scam_type": "family_emergency",
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "s14",
+    "text": "Hello my dear, I am Colonel James Burke, US Army, stationed overseas. I feel a deep connection with you. I need $1,800 to pay for leave papers so I can finally fly to meet you my love.",
+    "label": "scam",
+    "scam_type": "romance",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s15",
+    "text": "Hey beautiful, I know we've only talked for 3 weeks but I love you. My business shipment is stuck at customs and I need £1,200 for fees. You are the only one I trust. Will you help me?",
+    "label": "scam",
+    "scam_type": "romance",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s16",
+    "text": "Sweetheart, I'm in hospital in Lagos after an accident and my cards are blocked. Please send $900 via Western Union to my nurse, Grace Okafor. I'll pay you back when we meet.",
+    "label": "scam",
+    "scam_type": "romance",
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "s17",
+    "text": "Join our private group! Our AI trading bot turned $500 into $7,300 in 7 days. Guaranteed 20% daily returns. Deposit USDT at crypto-alpha-gains.io now, only 12 spots left!",
+    "label": "scam",
+    "scam_type": "investment_crypto",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s18",
+    "text": "Hi, I saw your profile. I'm a trader with Meridian Capital. My clients earn 300% monthly on forex signals. Send £250 to start and I'll double it by Friday. No risk.",
+    "label": "scam",
+    "scam_type": "investment_crypto",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s19",
+    "text": "URGENT: New token LUNARX is about to 100x. Insiders are buying before listing. Connect your wallet at lunarx-presale.xyz to claim your free airdrop before it ends tonight.",
+    "label": "scam",
+    "scam_type": "investment_crypto",
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "s20",
+    "text": "HMRC: You are eligible for a tax refund of £412.60. To receive it, submit your bank details within 24 hours at hmrc-refund-claim.org.uk. Failure to do so may result in forfeiture.",
+    "label": "scam",
+    "scam_type": "tax_refund",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s21",
+    "text": "HM Revenue & Customs final notice: unpaid tax of £1,870. A warrant will be issued for your arrest unless you pay today by bank transfer. Call 0113 496 0000 immediately.",
+    "label": "scam",
+    "scam_type": "tax_refund",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s22",
+    "text": "IRS Notice: You have a pending refund of $1,284. Verify your Social Security number and bank account at irs-refund-portal.com to release your payment.",
+    "label": "scam",
+    "scam_type": "tax_refund",
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "s23",
+    "text": "IRS Final Warning: Your 2023 tax return has errors. A federal case has been opened in your name. Pay $3,200 in Apple gift cards today to avoid arrest. Call 555-0142.",
+    "label": "scam",
+    "scam_type": "tax_refund",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s24",
+    "text": "MICROSOFT WARNING: Your computer is infected with 3 viruses! Call our certified technicians now on 0800 555 0188. Do not shut down your PC or you will lose all your data.",
+    "label": "scam",
+    "scam_type": "tech_support",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s25",
+    "text": "Hello, this is Kevin from Windows Support. We have detected hackers accessing your router. Please install AnyDesk so I can remove them. It will cost $199 for the one-year protection.",
+    "label": "scam",
+    "scam_type": "tech_support",
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "s26",
+    "text": "Your Apple ID was used to purchase a MacBook Pro for $1,499. If you did not authorise this, call Apple Support at 1-800-555-0176 immediately to cancel the order.",
+    "label": "scam",
+    "scam_type": "tech_support",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s27",
+    "text": "Your Netflix account has been suspended due to a billing problem. Update your payment details within 24 hours at netflix-billing-update.co to avoid permanent closure.",
+    "label": "scam",
+    "scam_type": "account_suspended",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s28",
+    "text": "PayPal: Your account access has been limited. We noticed unusual sign-in activity. Confirm your identity at paypa1-resolution.com or your account will be closed.",
+    "label": "scam",
+    "scam_type": "account_suspended",
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "s29",
+    "text": "Amazon: Your Prime membership could not be renewed. Your account will be suspended in 6 hours. Verify your card at amazon-account-verify.top/signin.",
+    "label": "scam",
+    "scam_type": "account_suspended",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "s30",
+    "text": "Google: Your Gmail storage is full and your account will be deleted in 48 hours. Click here to keep your data: goo.gl/Xk29Ls then sign in to confirm.",
+    "label": "scam",
+    "scam_type": "account_suspended",
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l01",
+    "text": "Barclays: Card ending 4821 was used for £23.40 at TESCO STORES 2210 on 14 May. If this wasn't you, call the number on the back of your card. Never share your PIN.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "l02",
+    "text": "Chase: A $62.18 purchase at TRADER JOE'S #512 was made with your card ending in 7730. Reply STOP to opt out of alerts. We'll never ask for your password by text.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l03",
+    "text": "Monzo: You've been paid £150.00 by Sam Okoye. Your balance is now £842.17. Open the app to see the details.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l04",
+    "text": "Royal Mail: Your parcel from Argos will be delivered tomorrow between 10:00 and 14:00. Track it with your tracking number in the Royal Mail app. No payment is needed.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "l05",
+    "text": "UPS: Your package from Wayfair has been delivered to the front porch at 2:14 PM. Photo available in your UPS My Choice account.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l06",
+    "text": "Amazon: Your order of 'Silicone Baking Mat Set' has shipped and arrives Thursday. Track your package anytime in Your Orders on amazon.com.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l07",
+    "text": "Hi Jordan, we got a request to reset your Spotify password. Use the link in the app within 1 hour. If you didn't request this, you can ignore this email and your password stays the same.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "l08",
+    "text": "Your GitHub password reset code is 482910. It expires in 15 minutes. If you didn't ask for this, ignore this message. Nobody from GitHub will ask for this code.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l09",
+    "text": "Microsoft account: A request was made to change the password for ja***@outlook.com. If this was you, tap the link in the Microsoft Authenticator app. If not, no action needed.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l10",
+    "text": "483 921 is your Google verification code. Don't share it with anyone.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "l11",
+    "text": "Your Lloyds Bank one-time passcode is 307845. It expires in 10 minutes. We will never call to ask for this code.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l12",
+    "text": "Your Venmo security code is 619204. Never share this code, Venmo will never ask for it.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l13",
+    "text": "Hi Priya, can you send me the Q3 sales deck before the 2pm team meeting? Thanks. Also, please book room 3B for Thursday.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "l14",
+    "text": "Morning team, reminder that timesheets are due by Friday 5pm. Please submit them in Workday. Let me know if you hit any problems. Thanks, Graham.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l15",
+    "text": "Alex, could you review the draft contract that Legal sent and send me comments by end of day tomorrow? Happy to chat if you want to walk through it.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l16",
+    "text": "Hey, the dinner last night came to £86 so £21.50 each. Can you send it to my Monzo? Link: monzo.me/liamcarter. Cheers!",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "l17",
+    "text": "Thanks for covering the Airbnb! My half is $212.50. Sending via Venmo now, let me know when you get it.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l18",
+    "text": "Hey it's Maya, can you Zelle me $18 for your share of the pizza last Friday? No rush.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l19",
+    "text": "Spring Sale at Boots! Get 25% off skincare and 3 for 2 on vitamins until Sunday. Shop now at boots.com/offers. Unsubscribe any time in your account settings.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "l20",
+    "text": "Your cart misses you! Use code SAVE15 for 15% off your order at nike.com. Offer ends Sunday. View in browser | Unsubscribe | Privacy Policy",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l21",
+    "text": "Black Friday early access: take up to 40% off at Best Buy. Free shipping over $35. Shop deals at bestbuy.com/blackfriday. Manage preferences or unsubscribe.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l22",
+    "text": "Reminder: you have a dental appointment with Dr. Patel at Brightside Dental on Tuesday 6 June at 9:30am. Reply C to confirm or call 020 7946 0321 to rearrange.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "l23",
+    "text": "Hi Chris, your Jiffy Lube oil change is scheduled for Saturday at 10:00 AM. Reply YES to confirm or call us at (555) 010-2299 to reschedule.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l24",
+    "text": "Octopus Energy: Your bill for April is ready. £64.20 will be taken by Direct Debit on 5 May. View your statement in the app.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l25",
+    "text": "Con Edison: Your bill of $91.35 is due Oct 18. Pay online at coned.com or via autopay. This is an automated message, please do not reply.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "l26",
+    "text": "Hey! Are we still on for the 5-a-side on Thursday? Pitch is booked for 7. Tell Ben to bring the bibs this time.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l27",
+    "text": "Running 10 min late, grab us a table at the café on Main? I'll get the first round.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l28",
+    "text": "GOV.UK: Your self assessment tax return has been received. Keep this email as a record. We will not ask for your bank details by email or text.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "dev"
+  },
+  {
+    "id": "l29",
+    "text": "IRS: Your tax return was accepted. Check your refund status at irs.gov/refunds with Where's My Refund. The IRS never initiates contact by text or email to ask for personal info.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  },
+  {
+    "id": "l30",
+    "text": "Netflix: Your plan will renew on 3 June at £10.99. You can view or change your plan any time in Account settings on netflix.com.",
+    "label": "legit",
+    "scam_type": null,
+    "source": "synthetic",
+    "split": "test"
+  }
+]

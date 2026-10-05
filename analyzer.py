@@ -12,6 +12,8 @@ DEFAULT_MODEL = "Qwen/Qwen3-32B"
 VERDICTS = ("likely scam", "suspicious", "likely safe")
 ESCALATE_SCORE = 70
 SUSPICIOUS_SCORE = 20
+TIMEOUT_SECONDS = 60
+MAX_RETRIES = 1
 THINK_RE = re.compile(r"<think>.*?</think>", re.DOTALL)
 
 INSTRUCTIONS = (
@@ -31,7 +33,8 @@ def build_prompt(text: str) -> str:
 
 def call_model(client: OpenAI, prompt: str) -> str:
     """The only place that talks to the model; swap this to change providers."""
-    response = client.chat.completions.create(
+    limited = client.with_options(timeout=TIMEOUT_SECONDS, max_retries=MAX_RETRIES)
+    response = limited.chat.completions.create(
         model=os.getenv("FEATHERLESS_MODEL") or DEFAULT_MODEL,
         messages=[{"role": "user", "content": prompt}],
     )

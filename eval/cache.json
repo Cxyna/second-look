@@ -1,0 +1,728 @@
+{
+  "rules-only": {
+    "s01": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "s02": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "s03": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "s04": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "s05": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "s06": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "s07": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "s08": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "s09": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "s10": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "s11": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "s12": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "s13": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "s14": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "s15": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "s16": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "s17": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "s18": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "s19": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "s20": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "s21": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "s22": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "s23": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "s24": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "s25": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "s26": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "s27": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "s28": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "s29": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "s30": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l01": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l02": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "l03": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l04": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l05": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l06": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l07": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "l08": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "l09": {
+      "flagged": false,
+      "verdict": "rules score 20"
+    },
+    "l10": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l11": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l12": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l13": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l14": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l15": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l16": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l17": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l18": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l19": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l20": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l21": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l22": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l23": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l24": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l25": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l26": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l27": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l28": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l29": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    },
+    "l30": {
+      "flagged": false,
+      "verdict": "rules score 0"
+    }
+  },
+  "model-only": {
+    "s01": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s02": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s03": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s04": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s05": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s06": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s07": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s08": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s09": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s10": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s11": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s12": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s13": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s14": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s15": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s16": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s17": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s18": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s19": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s20": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s21": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s22": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s23": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s24": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s25": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s26": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s27": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s28": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s29": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s30": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "l01": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l02": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l03": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l04": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l05": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l06": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l07": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "l08": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "l09": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l10": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "l11": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "l12": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "l13": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l14": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l15": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l16": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l17": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l18": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l19": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l20": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l21": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l22": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l23": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l24": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l25": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l26": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l27": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l28": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l29": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l30": {
+      "flagged": false,
+      "verdict": "likely safe"
+    }
+  },
+  "hybrid": {
+    "s01": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s02": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s03": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s04": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s05": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s06": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s07": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s08": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s09": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s10": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s11": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s12": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s13": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s14": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s15": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s16": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s17": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s18": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s19": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s20": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s21": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s22": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s23": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s24": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s25": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s26": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s27": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s28": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s29": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "s30": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "l01": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l02": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "l03": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l04": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l05": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l06": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l07": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l08": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "l09": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "l10": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "l11": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "l12": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "l13": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l14": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l15": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l16": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l17": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l18": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l19": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l20": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l21": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l22": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l23": {
+      "flagged": true,
+      "verdict": "likely scam"
+    },
+    "l24": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l25": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l26": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l27": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l28": {
+      "flagged": false,
+      "verdict": "likely safe"
+    },
+    "l29": {
+      "flagged": true,
+      "verdict": "suspicious"
+    },
+    "l30": {
+      "flagged": false,
+      "verdict": "likely safe"
+    }
+  }
+}
