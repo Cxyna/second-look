@@ -4,6 +4,7 @@ import re
 import streamlit as st
 
 import analyzer
+from redact import redact
 from report_channels import REPORT_CHANNELS
 
 EXAMPLES = {
@@ -19,10 +20,24 @@ VERDICTS = {
     "likely safe": ("✅", "This looks safe", "safe"),
 }
 
+# type -> (singular, plural)
+HIDDEN_LABELS = {
+    "email": ("email address", "email addresses"),
+    "phone": ("phone number", "phone numbers"),
+    "card": ("card number", "card numbers"),
+    "account": ("bank account", "bank accounts"),
+    "id": ("ID number", "ID numbers"),
+    "code": ("one-time code", "one-time codes"),
+}
+
+# Input is already HTML-escaped; "[PHONE]" etc. contain nothing escapable.
+HIDDEN_TAG = re.compile(r"\[(?:EMAIL|PHONE|CARD|ACCOUNT|ID|CODE)\]")
+HIDDEN_MARK = r'<span style="outline:1px dotted currentColor;border-radius:3px;padding:0 2px">\g<0></span>'
+
 st.html(
     '<div class="sl-hero"><h1>Check a message</h1>'
     "<p>Paste a suspicious message and get a second opinion before you click, pay or reply</p>"
-    '<span class="sl-note">Nothing is stored. Your text is sent to Featherless for analysis.</span></div>'
+    '<span class="sl-note">Nothing is stored. Your text is sent to Featherless for analysis, with personal numbers hidden first if you leave the switch below on.</span></div>'
 )
 
 
@@ -48,12 +63,20 @@ for col, (label, example) in zip(cols, EXAMPLES.items()):
 
 message = st.text_area("Message", key="message", height=160)
 
+hide = st.toggle("Hide personal details before sending", value=True)
+st.caption(
+    "Replaces emails, phone numbers, card and bank numbers, ID numbers and one-time codes with "
+    "placeholders before anything is checked. It can't reliably hide names or addresses, so "
+    "remove those yourself if they matter."
+)
+
 analyze_clicked = st.button("Analyze", type="primary")
 if analyze_clicked and not message.strip():
     st.warning("Paste a message first.")
 elif analyze_clicked:
+    shown, hidden = redact(message) if hide else (message, [])
     with st.spinner("Checking..."):
-        result = analyzer.analyze(message)
+        result = analyzer.analyze(shown)
 
     if result["notice"]:
         st.warning(result["notice"])
@@ -70,9 +93,18 @@ elif analyze_clicked:
     )
     st.html(
         '<div class="sl-card"><div class="sl-msg">'
-        f'{highlight(message, result["evidence_phrases"])}</div>'
-        '<p class="sl-legend">Highlighted words are the parts that made us suspicious.</p></div>'
+        f'{HIDDEN_TAG.sub(HIDDEN_MARK, highlight(shown, result["evidence_phrases"]))}</div>'
+        '<p class="sl-legend">Highlighted words are the parts that made us suspicious. '
+        "Dotted boxes like [PHONE] are details we hid.</p></div>"
     )
+
+    if hide:
+        parts = [f"{n} {HIDDEN_LABELS[k][n != 1]}" for k, n in hidden if k in HIDDEN_LABELS]
+        st.html(
+            '<div class="sl-card"><h3>What we hid before sending</h3><p>'
+            + (esc(", ".join(parts)) if parts else "Nothing needed hiding.")
+            + "</p></div>"
+        )
 
     rules = result["rules"]
     flagged = [f"{u} (URL shortener)" for u in rules["shorteners"]] + [
