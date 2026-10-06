@@ -4,6 +4,7 @@ import re
 import streamlit as st
 
 import analyzer
+import simplify
 from redact import redact
 from report_channels import REPORT_CHANNELS
 
@@ -43,6 +44,19 @@ st.html(
 
 def load_example(text: str) -> None:
     st.session_state["message"] = text
+
+
+@st.fragment
+def explain_card(result: dict) -> None:
+    """Fragment: the click reruns only this card, so the verdict stays; the text is never stored."""
+    if st.button("Explain it simply"):
+        with st.spinner("Writing..."):
+            text = simplify.explain_simply(result)
+        st.html(
+            '<div class="sl-card"><h3>In plain words</h3>'
+            f'<p class="sl-reason">{html.escape(text)}</p>'
+            '<p class="sl-legend">Written by AI. It may be wrong, so use the verdict above too.</p></div>'
+        )
 
 
 def highlight(text: str, phrases: list[str]) -> str:
@@ -88,9 +102,11 @@ elif analyze_clicked:
         f'<div class="sl-head"><span class="sl-icon" aria-hidden="true">{icon}</span>'
         f'<span class="sl-title">{headline}</span></div>'
         f'<p class="sl-reason">{esc(result["reasoning"])}</p>'
-        + (f"<h3>What to do now</h3><ol>{steps}</ol>" if steps else "")
         + "</div>"
     )
+    explain_card(result)
+    if steps:
+        st.html(f'<div class="sl-card"><h3>What to do now</h3><ol>{steps}</ol></div>')
     st.html(
         '<div class="sl-card"><div class="sl-msg">'
         f'{HIDDEN_TAG.sub(HIDDEN_MARK, highlight(shown, result["evidence_phrases"]))}</div>'

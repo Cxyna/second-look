@@ -126,10 +126,27 @@ a:focus-visible, button:focus-visible, textarea:focus-visible { outline: 3px sol
 """
 
 
-def apply_theme() -> None:
-    """Render the theme selector at the top of the sidebar and inject the theme CSS."""
-    with st.sidebar:
-        name = st.selectbox("Theme", list(THEMES), key="theme")
+# Static, appended after _CSS so it wins. Bigger text, spacing, buttons and tick-boxes.
+_LARGE_CSS = """
+html { font-size: 125%; }
+.stApp p, .stApp li, .stApp label, .stApp span, .stApp textarea { line-height: 1.7; }
+.stButton > button, [data-testid="stPageLink-NavLink"] { min-height: 4rem; font-size: 1.2rem; padding: .75rem 1.75rem; }
+.stButton > button[kind="primary"] { min-height: 4.5rem; font-size: 1.35rem; }
+label[data-baseweb="checkbox"] > span:first-child, label[data-baseweb="radio"] > div:first-child {
+  transform: scale(1.4); margin-right: .6rem; }
+[data-testid="stCheckbox"] label, [data-testid="stToggle"] label { min-height: 2.5rem; }
+"""
+
+
+def build_css(name: str, large: bool = False) -> str:
     colors = {**THEMES[name], "on-accent": on_color(THEMES[name]["iris"])}
     variables = "".join(f"--{k}: {v};" for k, v in colors.items())
-    st.html(f"<style>:root{{{variables}}}{_CSS}</style>")
+    return f"<style>:root{{{variables}}}{_CSS}{_LARGE_CSS if large else ''}</style>"
+
+
+def apply_theme() -> None:
+    """Render the sidebar theme selector and large-text switch, and inject the CSS."""
+    with st.sidebar:
+        name = st.selectbox("Theme", list(THEMES), key="theme")
+        large = st.toggle("Larger text and buttons", key="large_text")
+    st.html(build_css(name, large))
