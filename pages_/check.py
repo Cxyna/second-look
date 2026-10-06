@@ -5,6 +5,7 @@ import streamlit as st
 
 import analyzer
 import simplify
+import warn
 from redact import redact
 from report_channels import REPORT_CHANNELS
 
@@ -59,6 +60,19 @@ def explain_card(result: dict) -> None:
         )
 
 
+@st.fragment
+def warn_card(result: dict) -> None:
+    """Fragment: the click reruns only this card; the text is never stored or sent anywhere."""
+    st.markdown("**Warn my family**")
+    who = st.selectbox("Who is it for?", warn.WHO)
+    length = st.selectbox("How long?", list(warn.LIMITS))
+    if st.button("Write the warning"):
+        with st.spinner("Writing..."):
+            text = warn.draft_warning(result, who, length)
+        st.code(text, language=None, wrap_lines=True)
+        st.html('<p class="sl-legend">Written by AI. Read it before you send it.</p>')
+
+
 def highlight(text: str, phrases: list[str]) -> str:
     """Escape every segment of the message; only wrap already-escaped phrases in <mark>."""
     phrases = sorted({p for p in phrases if p}, key=len, reverse=True)
@@ -105,6 +119,8 @@ elif analyze_clicked:
         + "</div>"
     )
     explain_card(result)
+    if result["verdict"] in ("likely scam", "suspicious"):
+        warn_card(result)
     if steps:
         st.html(f'<div class="sl-card"><h3>What to do now</h3><ol>{steps}</ol></div>')
     st.html(
