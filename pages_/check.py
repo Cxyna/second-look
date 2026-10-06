@@ -4,10 +4,12 @@ import re
 import streamlit as st
 
 import analyzer
+import handoff
 import report_pack
 import simplify
 import warn
 from redact import redact
+from pages_.registry import PAGES
 from report_channels import REPORT_CHANNELS
 
 EXAMPLES = {
@@ -59,6 +61,25 @@ def explain_card(result: dict) -> None:
             f'<p class="sl-reason">{html.escape(text)}</p>'
             '<p class="sl-legend">Written by AI. It may be wrong, so use the verdict above too.</p></div>'
         )
+
+
+@st.fragment
+def handoff_card(result: dict) -> None:
+    """Fragment: buttons pass a one-shot choice via session_state, then open the target page."""
+    page = {p.title: p.path for p in PAGES}
+    st.markdown("**What next?**")
+    if st.button("Check whether it's really them"):
+        st.session_state["handoff_scenario"] = handoff.suggest_scenario(result)
+        st.switch_page(page["Is it really them?"])
+    story = st.text_area(
+        "Already clicked, paid or shared something? Tell us what happened, in your own words",
+        max_chars=handoff.MAX_CHARS,
+    )
+    if st.button("Build my plan"):
+        with st.spinner("Working it out..."):
+            st.session_state["handoff_actions"] = handoff.pick_actions(story) if story.strip() else []
+        st.session_state["handoff_country"] = st.session_state.get("rp_country")
+        st.switch_page(page["Already clicked or paid?"])
 
 
 @st.fragment
@@ -148,6 +169,8 @@ elif analyze_clicked:
         + "</div>"
     )
     explain_card(result)
+    if handoff.should_show(result):
+        handoff_card(result)
     if result["verdict"] in ("likely scam", "suspicious"):
         warn_card(result)
         report_pack_card(result, shown)

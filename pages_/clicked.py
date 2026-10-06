@@ -24,6 +24,16 @@ def show_plan() -> None:
     st.session_state["plan_country"] = st.session_state["country"]
 
 
+ids = st.session_state.pop("handoff_actions", None)  # read once, so a refresh can't replay it
+hand_country = st.session_state.pop("handoff_country", None)
+if hand_country in ("UK", "US"):
+    st.session_state["country"] = hand_country
+if ids:
+    st.session_state.setdefault("country", "UK")
+    for a in ACTIONS:
+        st.session_state[f"act-{a}"] = a in ids
+    show_plan()
+
 st.markdown("**What happened? Tick everything that applies.**")
 for action in ACTIONS:
     # Not str.capitalize(): it lowercases the rest, turning "ID" into "id".

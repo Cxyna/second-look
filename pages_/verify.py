@@ -13,7 +13,10 @@ st.html(
 )
 
 options = {v["label"]: k for k, v in SCENARIOS.items()}
-chosen_label = st.selectbox("Who is contacting you?", list(options))
+preset = st.session_state.pop("handoff_scenario", None)  # read once, so a refresh can't replay it
+if preset in SCENARIOS:
+    st.session_state["who"] = SCENARIOS[preset]["label"]
+chosen_label = st.selectbox("Who is contacting you?", list(options), key="who")
 scenario = SCENARIOS[options[chosen_label]]
 
 st.info(
