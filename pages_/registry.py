@@ -18,7 +18,7 @@ PAGES: list[PageInfo] = [
     PageInfo("Is it really them?", "pages_/verify.py", ":material/person_search:",
              "Check whether a sender is who they say they are.", True),
     PageInfo("How accurate is it?", "pages_/accuracy.py", ":material/fact_check:",
-             "See how well the checker performs.", False),
+             "See how well the checker performs.", True),
     PageInfo("About and privacy", "pages_/about.py", ":material/lock:",
-             "What we do with your text.", False),
+             "What we do with your text.", True),
 ]

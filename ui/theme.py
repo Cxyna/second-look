@@ -97,6 +97,10 @@ html, body, .stApp, button, input, textarea { font-family: system-ui, -apple-sys
 .sl-card li { margin: .35rem 0; }
 .sl-msg { white-space: pre-wrap; overflow-wrap: anywhere; }
 .sl-msg mark { background: var(--gold); color: #191724; padding: 0 .2em; border-radius: 4px; }
+.sl-tile span, .sl-tile small { display: block; }
+.sl-table { width: 100%; border-collapse: collapse; background: var(--surface); color: var(--text); }
+.sl-table th, .sl-table td { border: 1px solid var(--edge); padding: .5rem .7rem; text-align: left; }
+.sl-table th { background: var(--overlay); }
 .sl-legend { font-size: .9rem; margin: .8rem 0 0; }
 
 .stButton > button, [data-testid="stPageLink-NavLink"] {
