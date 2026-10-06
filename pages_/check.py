@@ -4,6 +4,7 @@ import re
 import streamlit as st
 
 import analyzer
+import report_pack
 import simplify
 import warn
 from redact import redact
@@ -73,6 +74,34 @@ def warn_card(result: dict) -> None:
         st.html('<p class="sl-legend">Written by AI. Read it before you send it.</p>')
 
 
+@st.fragment
+def report_pack_card(result: dict, shown: str) -> None:
+    """Fragment: clicks rerun only this card; the report lives in memory for this run and is never stored."""
+    st.markdown("**Report it for me**")
+    country = st.selectbox("Country", list(REPORT_CHANNELS), key="rp_country")
+    contact = st.selectbox("How did they contact you?", report_pack.CONTACT_TYPES)
+    when = st.text_input("When did it happen?", placeholder="today about 3pm")
+    sender = st.text_input("Sender (number, email or account name, optional)")
+    link = st.text_input("Link in the message (optional)")
+    money = st.selectbox("Did you lose money?", ["no", "not sure", "yes"])
+    if money == "yes":
+        money = f"yes, {st.text_input('How much?').strip() or 'amount not given'}"
+    build = st.button("Build my report")
+    ai = st.button("Write a short summary")
+    st.caption("If you write the short summary, press Build my report again to include it.")
+    if build or ai:
+        summary = ""
+        if ai:
+            with st.spinner("Writing..."):
+                summary = report_pack.summarize(result, contact, when)
+        text = report_pack.build_report(result, shown, country, contact, when, sender, link, money, summary)
+        st.html('<p class="sl-legend"><strong>Check it before you send it.</strong></p>')
+        st.code(text, language=None, wrap_lines=True)
+        st.download_button("Download as .txt", text.encode("utf-8"), "report.txt", "text/plain", on_click="ignore")
+        if ai:
+            st.html('<p class="sl-legend">The summary is written by AI. It may be wrong.</p>')
+
+
 def highlight(text: str, phrases: list[str]) -> str:
     """Escape every segment of the message; only wrap already-escaped phrases in <mark>."""
     phrases = sorted({p for p in phrases if p}, key=len, reverse=True)
@@ -121,6 +150,7 @@ elif analyze_clicked:
     explain_card(result)
     if result["verdict"] in ("likely scam", "suspicious"):
         warn_card(result)
+        report_pack_card(result, shown)
     if steps:
         st.html(f'<div class="sl-card"><h3>What to do now</h3><ol>{steps}</ol></div>')
     st.html(
