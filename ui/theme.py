@@ -112,6 +112,11 @@ html, body, .stApp, button, input, textarea { font-family: system-ui, -apple-sys
 textarea, [data-baseweb="select"] > div, [data-baseweb="textarea"] {
   background: var(--overlay) !important; color: var(--text) !important; border-radius: 16px !important; }
 [data-testid="stExpander"] { border: 1px solid var(--edge); border-radius: 20px; background: var(--surface); }
+label[data-baseweb="checkbox"]:has(input:checked) > span:first-child {
+  background: var(--accent) !important; border-color: var(--accent) !important; }
+label[data-baseweb="radio"]:has(input:checked) > div:first-child {
+  background: var(--accent) !important; border-color: var(--accent) !important; }
+[data-testid="stProgress"] [role="progressbar"] > div > div { background: var(--accent) !important; }
 a:focus-visible, button:focus-visible, textarea:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 @media (max-width: 640px) {
   .st-key-grid-features { grid-template-columns: 1fr; }

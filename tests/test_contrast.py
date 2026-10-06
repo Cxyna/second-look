@@ -17,3 +17,10 @@ def test_primary_button_text_readable(name: str) -> None:
 def test_button_and_pill_text_readable(name: str) -> None:
     t = THEMES[name]
     assert contrast(t["text"], t["overlay"]) >= 4.5
+
+
+@pytest.mark.parametrize("name", THEMES)
+def test_checkbox_radio_progress_fill_visible(name: str) -> None:
+    # All three controls are filled with --accent (= iris) on the page background (base).
+    t = THEMES[name]
+    assert contrast(t["iris"], t["base"]) >= 3
