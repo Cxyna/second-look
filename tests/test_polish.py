@@ -36,3 +36,11 @@ def test_check_page_wording():
 def test_home_has_no_todo_or_typed_number():
     src = (ROOT / "pages_" / "home.py").read_text(encoding="utf-8")
     assert "TODO" not in src and "92" not in src
+
+
+def test_highlight_escapes_html() -> None:
+    from ui.theme import highlight
+    msg = "<script>alert(1)</script> pay </mark> now"
+    out = highlight(msg, ["</mark>", "<script>"])
+    assert "<script>" not in out and "&lt;script&gt;" in out
+    assert out.count("</mark>") == 2 and "&lt;/mark&gt;" in out

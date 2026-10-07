@@ -7,7 +7,6 @@ with rule-based checks plus a Featherless model call.
 - `app.py` — Streamlit UI
 - `rules.py` — rule-based checks
 - `analyzer.py` — Featherless model call; combines with rule results
-- `text.py` — scratch Featherless/OpenAI-client script
 - `tests/test_rules.py` — pytest tests for `rules.py`
 - `.env.example` — key template; `requirements.txt` — deps
 

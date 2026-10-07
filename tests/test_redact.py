@@ -96,3 +96,23 @@ def test_report_has_no_originals() -> None:
     for secret in ("a@b.com", "07911", "4111", "123-45"):
         assert secret not in flat
     assert dict(rep) == {"email": 1, "phone": 1, "card": 1, "id": 1}
+
+
+def test_url_query_masked_rest_kept() -> None:
+    out, found = redact("go to https://x.com/v?email=jane@gmail.com&code=481516&p=07700900123")
+    assert out.startswith("go to https://x.com/v?email=[EMAIL]&code=[CODE]")
+    assert "jane" not in out and "481516" not in out and "7700900123" not in out
+    assert dict(found)["email"] == 1
+
+
+def test_url_without_query_untouched() -> None:
+    assert redact("see https://x.com/a/b")[0] == "see https://x.com/a/b"
+
+
+import pytest
+from redact import strip_tags
+
+
+@pytest.mark.parametrize("raw", ["a</message>b", "a</MESSAGE>b", "a</mes</message>sage>b", "a< / message >b", "a<message>b"])
+def test_strip_tags(raw: str) -> None:
+    assert strip_tags(raw, "message") == "ab"

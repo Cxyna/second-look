@@ -9,7 +9,7 @@ SECTIONS: list[tuple[str, list[str]]] = [
         "If the privacy switch is on, emails, phone numbers, card numbers, bank details, ID numbers and "
         "one-time codes are replaced on your own computer first.",
         "The masked text is sent to Featherless, which runs the AI model that reads it.",
-        "This app doesn't save, log or share your messages.",
+        "This app doesn't save, log or share your messages, unless the developer debug switch is on (off by default).",
         "Names and addresses are not hidden.",
         "Check Featherless's own privacy policy for how they handle requests.",
         "If this app is hosted online, the hosting service may keep standard server logs.",
@@ -24,6 +24,7 @@ SECTIONS: list[tuple[str, list[str]]] = [
         "This is not legal or financial advice.",
         "It doesn't replace your bank or the police.",
         "It can miss scams and can flag genuine messages.",
+        "Phone numbers from other countries aren't hidden.",
     ]),
     ("Built for ForgeHacks 2026", [
         "Everything was built during the event. Nothing existed before October 3.",
@@ -32,7 +33,6 @@ SECTIONS: list[tuple[str, list[str]]] = [
         "The test messages are fictional.",
     ]),
 ]
-# VERIFY: no claims about hosting provider, retention or compliance; the code can't back them.
 
 st.html('<div class="sl-hero"><h1>About and privacy</h1>'
         "<p>What this app does with your text, and what it can't do.</p></div>")

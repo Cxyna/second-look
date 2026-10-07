@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 import rules
+from redact import strip_tags
 
 BASE_URL = "https://api.featherless.ai/v1"
 DEFAULT_MODEL = "Qwen/Qwen3-32B"
@@ -46,7 +47,7 @@ INSTRUCTIONS = (
 
 
 def build_prompt(text: str) -> str:
-    safe_text = text.replace("</message>", "")
+    safe_text = strip_tags(text, "message")
     return f"{INSTRUCTIONS}\n\n<message>\n{safe_text}\n</message>"
 
 

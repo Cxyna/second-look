@@ -1,5 +1,6 @@
 """Themes as CSS-variable dicts, injected as one static <style> block."""
 import html
+import re
 
 import streamlit as st
 
@@ -183,3 +184,14 @@ def apply_theme() -> None:
         name = st.selectbox("Theme", list(THEMES), key="theme")
         large = st.toggle("Larger text and buttons", key="large_text")
     st.html(build_css(name, large))
+
+
+def highlight(text: str, phrases: list[str]) -> str:
+    """Escape every segment of the message; only wrap already-escaped phrases in <mark>."""
+    phrases = sorted({p for p in phrases if p}, key=len, reverse=True)
+    if not phrases:
+        return html.escape(text)
+    parts = re.split(f"({'|'.join(map(re.escape, phrases))})", text)
+    return "".join(
+        f"<mark>{html.escape(p)}</mark>" if i % 2 else html.escape(p) for i, p in enumerate(parts)
+    )

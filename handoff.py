@@ -6,7 +6,7 @@ from openai import OpenAI
 
 import analyzer
 from recovery import ACTIONS
-from redact import redact
+from redact import redact, strip_tags
 from simplify import _ask
 
 MAX_CHARS = 300
@@ -45,7 +45,7 @@ def pick_actions(text: str, client: OpenAI | None = None) -> list[str]:
             if not key:
                 return []
             client = OpenAI(base_url=analyzer.BASE_URL, api_key=key)
-        story = redact(text[:MAX_CHARS])[0].replace("</story>", "")
+        story = strip_tags(redact(text[:MAX_CHARS])[0], "story")
         reply = analyzer.THINK_RE.sub("", _ask(client, f"{INSTRUCTIONS}\n\n<story>\n{story}\n</story>")).strip()
         ids = json.loads(reply)
     except Exception:  # timeout, network, bad JSON: user ticks boxes themselves

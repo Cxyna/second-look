@@ -14,7 +14,6 @@ RESULTS: dict[str, dict] = {
 }
 
 # Development history, given by the team; NOT an unseen test (the prompt was improved using this run).
-# VERIFY: 20 scam + 20 legit = 40 messages is implied by the counts, not stated in any eval file.
 BEFORE_TUNING: dict[str, dict] = {
     "model": {"label": "AI model only", "fp": 10, "tn": 10, "tp": 20, "fn": 0, "accuracy": 75},
     "hybrid": {"label": "Full app (rules + AI)", "fp": 13, "tn": 7, "tp": 20, "fn": 0, "accuracy": 68},

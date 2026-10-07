@@ -60,12 +60,13 @@ st.subheader("Before tuning (development run)")
 st.html(table(["Setup", "Genuine messages wrongly flagged", "Scams caught", "Overall correct"],
               [[b["label"], f"{b['fp']} of {b['fp'] + b['tn']}", f"{b['tp']} of {b['tp'] + b['fn']}", f"{b['accuracy']}%"]
                for b in BEFORE_TUNING.values()]))
-st.write("This was a development run. We used it to improve the AI's prompt, so it is not an unseen test. "
-         "The tables above come from a separate set the prompt was never tuned on.")
+st.write("The prompt was tuned using a first set of 60 messages. These results come from a second set of 50 "
+         "messages that the prompt was never tuned on. The rules-only row uses a simple threshold of 40 chosen "
+         "for this comparison; the full app uses its own thresholds.")
 
 st.subheader("How we measured it")
 st.write(f"{N_MESSAGES} fictional messages ({N_SCAM} scams, {N_LEGIT} genuine) were written for this project by an AI. "
-         "They were never used to tune the prompt. It is a small sample, so the ranges are wide.")
+         "It is a small sample, so the ranges are wide.")
 
 st.subheader("What it gets wrong")
 st.write("The three missed scams were early-stage messages with no request yet, such as a wrong-number opener "

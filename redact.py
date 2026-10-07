@@ -37,6 +37,14 @@ _PUA = re.compile("[-]")
 _FAILED = "[message hidden: could not be checked]"
 
 
+def strip_tags(text: str, tag: str) -> str:
+    """Remove <tag> and </tag> (any case, stray spaces) until stable, so split tricks can't rebuild one."""
+    rx = re.compile(rf"<\s*/?\s*{re.escape(tag)}\s*>", re.IGNORECASE)
+    while (new := rx.sub("", text)) != text:
+        text = new
+    return text
+
+
 def _luhn(digits: str) -> bool:
     total = 0
     for i, ch in enumerate(reversed(digits)):
@@ -93,9 +101,19 @@ def redact(text: str) -> tuple[str, list[tuple[str, int]]]:
             counts["code"] = counts.get("code", 0) + 1
             return m.group(1) + "[CODE]"
 
+        def keep_url(m: re.Match) -> str:
+            base, sep, query = m.group(0).partition("?")
+            if sep:
+                query, found = redact(query)
+                for kind, n in found:
+                    counts[kind] = counts.get(kind, 0) + n
+                base += sep + query
+            kept.append(base)
+            return _token(len(kept) - 1)
+
         out = _PUA.sub("", text)
         for p in _PROTECT:
-            out = p.sub(keep, out)
+            out = p.sub(keep_url if p is _PROTECT[0] else keep, out)
         out = _EMAIL.sub(mask("email", "[EMAIL]"), out)
         out = _DOMAIN.sub(keep, out)
         out = _IBAN.sub(mask("id", "[ID]"), out)

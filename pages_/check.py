@@ -9,7 +9,7 @@ import report_pack
 import simplify
 import warn
 from redact import redact
-from ui.theme import VERDICT_ICONS
+from ui.theme import VERDICT_ICONS, highlight
 from pages_.registry import PAGES
 from report_channels import REPORT_CHANNELS
 
@@ -123,17 +123,6 @@ def report_pack_card(result: dict, shown: str) -> None:
         st.download_button("Download as .txt", text.encode("utf-8"), "report.txt", "text/plain", on_click="ignore")
         if ai:
             st.html('<p class="sl-legend">The summary is written by AI. It may be wrong.</p>')
-
-
-def highlight(text: str, phrases: list[str]) -> str:
-    """Escape every segment of the message; only wrap already-escaped phrases in <mark>."""
-    phrases = sorted({p for p in phrases if p}, key=len, reverse=True)
-    if not phrases:
-        return html.escape(text)
-    parts = re.split(f"({'|'.join(map(re.escape, phrases))})", text)
-    return "".join(
-        f"<mark>{html.escape(p)}</mark>" if i % 2 else html.escape(p) for i, p in enumerate(parts)
-    )
 
 
 st.markdown("**Try an example**")
