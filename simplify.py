@@ -46,12 +46,7 @@ def build_prompt(result: dict) -> str:
 
 
 def _ask(client: OpenAI, prompt: str) -> str:
-    limited = client.with_options(timeout=TIMEOUT_SECONDS, max_retries=MAX_RETRIES)
-    response = limited.chat.completions.create(
-        model=os.getenv("FEATHERLESS_MODEL") or analyzer.DEFAULT_MODEL,
-        messages=[{"role": "user", "content": prompt}],
-    )
-    return response.choices[0].message.content or ""
+    return analyzer.call_model(client, prompt, TIMEOUT_SECONDS)[0]
 
 
 def explain_simply(result: dict, client: OpenAI | None = None) -> str:

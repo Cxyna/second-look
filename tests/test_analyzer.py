@@ -48,6 +48,44 @@ def test_call_model_sets_timeout_and_one_retry() -> None:
     )
 
 
+def _calls(client: MagicMock) -> list:
+    return client.with_options.return_value.chat.completions.create.call_args_list
+
+
+def test_length_retries_once_with_bigger_budget() -> None:
+    client = _client(_reply("", "length"), _reply(GOOD))
+
+    result = analyzer.analyze("hello", client)
+
+    assert result["notice"] is None
+    assert [c.kwargs["max_tokens"] for c in _calls(client)] == [analyzer.MAX_TOKENS, analyzer.RETRY_MAX_TOKENS]
+
+
+def test_repeated_length_falls_back_without_reply_text() -> None:
+    client = _client(*[_reply("SECRET-REPLY-TEXT", "length")] * 6)
+
+    result = analyzer.analyze("hello", client)
+
+    assert "reply cut off (finish_reason=length)" in result["notice"]
+    assert "SECRET-REPLY-TEXT" not in result["notice"]
+    assert len(_calls(client)) == 6  # 3 attempts x 2 budgets
+
+
+def test_repeated_empty_length_names_category() -> None:
+    result = analyzer.analyze("hello", _client(*[_reply("", "length")] * 6))
+
+    assert "empty reply (finish_reason=length)" in result["notice"]
+
+
+def test_timeout_param_overrides_default() -> None:
+    client = MagicMock()
+    client.with_options.return_value.chat.completions.create.return_value = _reply("ok")
+
+    analyzer.call_model(client, "hi", timeout=30)
+
+    client.with_options.assert_called_once_with(timeout=30, max_retries=analyzer.MAX_RETRIES)
+
+
 def test_succeeds_on_third_attempt() -> None:
     client = _client(TimeoutError("x"), _reply(""), _reply(GOOD))
 

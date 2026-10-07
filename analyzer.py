@@ -16,6 +16,8 @@ ESCALATE_SCORE = 70
 SUSPICIOUS_SCORE = 20
 TIMEOUT_SECONDS = 60
 MAX_RETRIES = 1
+MAX_TOKENS = 2000
+RETRY_MAX_TOKENS = 6000
 MAX_ATTEMPTS = 3
 RETRY_DELAY_SECONDS = 2
 DEBUG_REPLY_CHARS = 300
@@ -48,14 +50,18 @@ def build_prompt(text: str) -> str:
     return f"{INSTRUCTIONS}\n\n<message>\n{safe_text}\n</message>"
 
 
-def call_model(client: OpenAI, prompt: str) -> tuple[str, str]:
+def call_model(client: OpenAI, prompt: str, timeout: int = TIMEOUT_SECONDS) -> tuple[str, str]:
     """The only place that talks to the model; swap this to change providers."""
-    limited = client.with_options(timeout=TIMEOUT_SECONDS, max_retries=MAX_RETRIES)
-    response = limited.chat.completions.create(
-        model=os.getenv("FEATHERLESS_MODEL") or DEFAULT_MODEL,
-        messages=[{"role": "user", "content": prompt}],
-    )
-    choice = response.choices[0]
+    limited = client.with_options(timeout=timeout, max_retries=MAX_RETRIES)
+    for budget in (MAX_TOKENS, RETRY_MAX_TOKENS):  # one bigger retry if reasoning ate the budget
+        response = limited.chat.completions.create(
+            model=os.getenv("FEATHERLESS_MODEL") or DEFAULT_MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=budget,
+        )
+        choice = response.choices[0]
+        if choice.finish_reason != "length":
+            break
     return choice.message.content or "", str(choice.finish_reason)
 
 

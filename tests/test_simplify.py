@@ -32,6 +32,14 @@ def test_normal_reply_is_shown() -> None:
     assert simplify.explain_simply(RESULT, client_replying(reply)) == reply
 
 
+def test_length_every_time_gives_fallback() -> None:
+    client = client_replying("")
+    client.chat.completions.create.return_value.choices[0].finish_reason = "length"
+
+    assert simplify.explain_simply(RESULT, client) == simplify.FALLBACKS["likely scam"]
+    assert client.chat.completions.create.call_count == 2  # base + bigger budget
+
+
 def test_think_block_stripped() -> None:
     out = simplify.explain_simply(RESULT, client_replying("<think>hmm</think>Do not reply."))
     assert out == "Do not reply."

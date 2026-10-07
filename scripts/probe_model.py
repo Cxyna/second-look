@@ -50,14 +50,19 @@ def main() -> None:
             prompt = analyzer.build_prompt(text)
             try:
                 r = client.with_options(timeout=analyzer.TIMEOUT_SECONDS, max_retries=0).chat.completions.create(
-                    model=model, messages=[{"role": "user", "content": prompt}])
+                    model=model, messages=[{"role": "user", "content": prompt}],
+                    **({"extra_body": {"chat_template_kwargs": {"enable_thinking": False}}} if os.getenv("PROBE_NOTHINK") else {}))
                 raw, finish = r.choices[0].message.content or "", r.choices[0].finish_reason
+                toks = r.usage.completion_tokens if r.usage else None
             except Exception as exc:
-                raw, finish = "", f"error {type(exc).__name__}"
+                raw, finish, toks = "", f"error {type(exc).__name__}", None
+            think = re.match(r"\s*<think>(.*?)(</think>|$)", raw, re.DOTALL)
+            think_len = len(think.group(1)) if think else 0
             why = classify(raw, finish) if not finish.startswith("error") else finish
             tags = [t for t, hit in (("has <think>", "<think>" in raw), ("fence", "```" in raw)) if hit]
             counts[why] += 1
             f.write(f"=== run {i} | {why} | finish={finish} | {tags} | len={len(raw)}\n{raw!r}\n\n")
+            print(f"run {i}: finish={finish} completion_tokens={toks} starts_with_think={bool(think)} think_chars={think_len} parsed={bool(analyzer.parse_reply(raw))}")
     for why, n in counts.most_common():
         print(f"{n:3d}/{sum(counts.values())}  {why}")
 
