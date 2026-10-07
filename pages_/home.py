@@ -1,6 +1,7 @@
 import streamlit as st
 
 from pages_.registry import PAGES
+from ui.theme import accuracy_tile_html
 
 st.html(
     '<div class="sl-hero"><h1>Second Look</h1>'
@@ -22,9 +23,10 @@ with st.container(key="grid-features"):
             else:
                 st.html('<span class="sl-soon">Coming soon</span>')
 
-# TODO: accuracy tile. Add it only once the eval gives a real, reproducible number.
 st.html(
     '<div class="sl-tiles">'
-    '<div class="sl-tile"><b>0 messages stored</b></div>'
+    + accuracy_tile_html()
+    + '<div class="sl-tile"><b>0 messages stored</b></div>'
     '<div class="sl-tile"><b>Runs rule checks and an AI model</b></div></div>'
 )
+st.page_link("pages_/accuracy.py", label="How accurate is it?", icon=":material/fact_check:")

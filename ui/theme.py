@@ -1,4 +1,6 @@
 """Themes as CSS-variable dicts, injected as one static <style> block."""
+import html
+
 import streamlit as st
 
 DEFAULT_THEME = "Rose Pine"
@@ -89,7 +91,11 @@ html, body, .stApp, button, input, textarea { font-family: system-ui, -apple-sys
 .sl-verdict.warn { border-left-color: var(--gold); }
 .sl-verdict.safe { border-left-color: var(--pine); }
 .sl-head { display: flex; align-items: center; gap: 1.1rem; }
-.sl-icon { font-size: 3.6rem; line-height: 1; }
+.sl-icon { font-size: 3.6rem; line-height: 1; display: inline-flex; flex: none; }
+.sl-icon svg { display: block; }
+.sl-verdict.scam .sl-icon { color: var(--love); }
+.sl-verdict.warn .sl-icon { color: var(--gold); }
+.sl-verdict.safe .sl-icon { color: var(--pine); }
 .sl-title { font-size: 1.9rem; font-weight: 700; line-height: 1.2; }
 .sl-reason { margin: 1rem 0 0; font-size: 1.1rem; }
 .sl-card h3 { margin: 1.2rem 0 .5rem; font-size: 1.1rem; }
@@ -110,7 +116,9 @@ html, body, .stApp, button, input, textarea { font-family: system-ui, -apple-sys
   background: var(--accent); color: var(--on-accent); border-color: var(--accent); box-shadow: var(--glow); }
 .stButton > button[kind="primary"] * { color: var(--on-accent) !important; }
 [data-testid="stMarkdownContainer"] a { color: var(--accent); text-decoration: underline; }
-.st-key-grid-features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+.st-key-grid-features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; align-items: stretch; }
+.st-key-grid-features > div { display: flex; }
+.st-key-grid-features > div > [data-testid="stVerticalBlock"] { flex: 1; }
 .stButton > button p { color: inherit; }
 .stButton > button:hover, [data-testid="stPageLink-NavLink"]:hover { border-color: var(--accent); }
 textarea, [data-baseweb="select"] > div, [data-baseweb="textarea"] {
@@ -140,6 +148,27 @@ label[data-baseweb="checkbox"] > span:first-child, label[data-baseweb="radio"] >
   transform: scale(1.4); margin-right: .6rem; }
 [data-testid="stCheckbox"] label, [data-testid="stToggle"] label { min-height: 2.5rem; }
 """
+
+
+def _svg(body: str) -> str:
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" '
+            f'fill="currentColor" aria-hidden="true" focusable="false">{body}</svg>')
+
+
+# Static markup, three different shapes so the icon never relies on colour alone.
+VERDICT_ICONS = {
+    "scam": _svg('<path d="M12 2a10 10 0 100 20 10 10 0 000-20zm4.7 12.3l-1.4 1.4L12 13.4l-3.3 3.3-1.4-1.4'
+                 'L10.6 12 7.3 8.7l1.4-1.4L12 10.6l3.3-3.3 1.4 1.4L13.4 12z"/>'),
+    "warn": _svg('<path d="M12 2L1 21h22zm1 15h-2v-2h2zm0-4h-2V9h2z"/>'),
+    "safe": _svg('<path d="M12 2a10 10 0 100 20 10 10 0 000-20zm-2 15l-5-5 1.4-1.4L10 14.2l7.6-7.6L19 8z"/>'),
+}
+
+
+def accuracy_tile_html() -> str:
+    """Home stat tile, numbers read from accuracy_data. The link is an st.page_link (no full reload)."""
+    import accuracy_data as ad
+    text = f"{ad.RESULTS['hybrid']['accuracy']}% accuracy on {ad.N_MESSAGES} unseen test messages"
+    return f'<div class="sl-tile"><b>{html.escape(text)}</b></div>'
 
 
 def build_css(name: str, large: bool = False) -> str:

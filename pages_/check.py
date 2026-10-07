@@ -9,6 +9,7 @@ import report_pack
 import simplify
 import warn
 from redact import redact
+from ui.theme import VERDICT_ICONS
 from pages_.registry import PAGES
 from report_channels import REPORT_CHANNELS
 
@@ -18,11 +19,11 @@ EXAMPLES = {
     "Boss gift card": "Hi, it's your manager. I'm stuck in a meeting and need 5 gift cards for a client, $100 each. Buy them now and send me the codes. Keep it between us.",
     "Legitimate": "Hi Sam, are we still on for lunch Thursday at 12:30? I booked the table at the usual place. Let me know if that changes.",
 }
-# verdict -> (icon, plain-English headline, CSS class)
+# verdict -> (icon key, plain-English headline, CSS class)
 VERDICTS = {
-    "likely scam": ("🚫", "This looks like a scam", "scam"),
-    "suspicious": ("⚠️", "This looks suspicious", "warn"),
-    "likely safe": ("✅", "This looks safe", "safe"),
+    "likely scam": ("scam", "This looks like a scam", "scam"),
+    "suspicious": ("warn", "This looks suspicious", "warn"),
+    "likely safe": ("safe", "This looks safe", "safe"),
 }
 
 # type -> (singular, plural)
@@ -75,6 +76,7 @@ def handoff_card(result: dict) -> None:
         "Already clicked, paid or shared something? Tell us what happened, in your own words",
         max_chars=handoff.MAX_CHARS,
     )
+    st.caption("Please don't type names or addresses.")
     if st.button("Build my plan"):
         with st.spinner("Working it out..."):
             st.session_state["handoff_actions"] = handoff.pick_actions(story) if story.strip() else []
@@ -163,7 +165,7 @@ elif analyze_clicked:
     steps = "".join(f"<li>{esc(a)}</li>" for a in result["actions"])
     st.html(
         f'<div class="sl-card sl-verdict {css}">'
-        f'<div class="sl-head"><span class="sl-icon" aria-hidden="true">{icon}</span>'
+        f'<div class="sl-head"><span class="sl-icon" aria-hidden="true">{VERDICT_ICONS[icon]}</span>'
         f'<span class="sl-title">{headline}</span></div>'
         f'<p class="sl-reason">{esc(result["reasoning"])}</p>'
         + "</div>"
@@ -197,7 +199,8 @@ elif analyze_clicked:
     ]
     with st.expander("How we checked this"):
         st.text(f"Scam type: {result['scam_type']}")
-        st.write(f"**Rule score:** {rules['score']}/100")
+        st.write(f"**Rule-based checks (links and phrases):** {rules['score']}/100")
+        st.caption("The verdict combines these rule checks with the AI model's reading of the message.")
         if flagged:
             st.write("**Flagged links (not clickable)**")
             for item in flagged:
