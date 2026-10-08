@@ -59,3 +59,32 @@ for i, step in enumerate(plan):
         st.subheader(current)
     # Hardcoded text in a markdown widget label (not raw HTML), so no escaping needed.
     st.checkbox(step.text, key=f"done-{slug(step.text)}")
+
+# Formal Incident Response Export
+report_lines = [
+    "==================================================",
+    "SECOND LOOK — VICTIM INCIDENT REPORT & ACTION LOG",
+    "==================================================",
+    f"Jurisdiction: {st.session_state['plan_country']}",
+    f"Completed Steps: {done} of {len(plan)}",
+    "\nACTIONS REPORTED BY VICTIM:",
+]
+for act in plan_actions:
+    report_lines.append(f" - {act.upper()}")
+
+report_lines.append("\nINCIDENT MITIGATION STATUS:")
+for step in plan:
+    status = "[COMPLETED]" if st.session_state.get(f"done-{slug(step.text)}") else "[PENDING]"
+    report_lines.append(f" {status} ({step.urgency}) {step.text}")
+
+report_lines.append("\nNOTE: Provide this log to your bank's fraud team or local cybercrime authority.")
+export_text = "\n".join(report_lines)
+
+st.write("")
+st.download_button(
+    "📥 Download Incident Action Log (.txt)",
+    data=export_text.encode("utf-8"),
+    file_name="second-look-incident-log.txt",
+    mime="text/plain",
+    help="Download a clean log of actions taken to share with your bank or reporting agency.",
+)

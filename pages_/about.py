@@ -8,6 +8,7 @@ SECTIONS: list[tuple[str, list[str]]] = [
     ("What happens to your text", [
         "If the privacy switch is on, emails, phone numbers, card numbers, bank details, ID numbers and "
         "one-time codes are replaced on your own computer first.",
+        "Screenshots are processed locally on your device with on-device OCR and are never uploaded or stored.",
         "The masked text is sent to Featherless, which runs the AI model that reads it.",
         "This app doesn't save, log or share your messages, unless the developer debug switch is on (off by default).",
         "Names and addresses are not hidden.",

@@ -8,6 +8,7 @@ import handoff
 import report_pack
 import simplify
 import warn
+import ocr
 from redact import redact
 from ui.theme import VERDICT_ICONS, highlight
 from pages_.registry import PAGES
@@ -17,7 +18,9 @@ EXAMPLES = {
     "Parcel scam": "Royal Mail: your parcel is held due to unpaid postage of £1.45. Pay within 24 hours or it will be returned: http://bit.ly/rm-redeliver",
     "Bank alert scam": "URGENT: Unusual activity on your account. Your login has been suspended. Verify your account immediately at http://paypa1-secure.com/login",
     "Boss gift card": "Hi, it's your manager. I'm stuck in a meeting and need 5 gift cards for a client, $100 each. Buy them now and send me the codes. Keep it between us.",
-    "Legitimate": "Hi Sam, are we still on for lunch Thursday at 12:30? I booked the table at the usual place. Let me know if that changes.",
+    "Reverse-psychology HSBC": "HSBC Security: Transaction of £890.00 to CryptoPay is pending. If this was NOT you, call our fraud desk immediately on 0800 048 7192. HSBC will NEVER ask for your PIN.",
+    "Zero-link invoice": "Invoice #8910: Your GeekTech Security 2-year subscription renewed for $499.00. Debited from card ending in 4102. To dispute or request a refund call +1-888-512-8921.",
+    "Legitimate friend": "Hi Sam, are we still on for lunch Thursday at 12:30? I booked the table at the usual place. Let me know if that changes.",
 }
 # verdict -> (icon key, plain-English headline, CSS class)
 VERDICTS = {
@@ -125,10 +128,35 @@ def report_pack_card(result: dict, shown: str) -> None:
             st.html('<p class="sl-legend">The summary is written by AI. It may be wrong.</p>')
 
 
+import random
+
+def load_random_example() -> None:
+    st.session_state["message"] = random.choice(list(EXAMPLES.values()))
+
 st.markdown("**Try an example**")
-cols = st.columns(len(EXAMPLES))
-for col, (label, example) in zip(cols, EXAMPLES.items()):
-    col.button(label, on_click=load_example, args=(example,), use_container_width=True)
+cols = st.columns(3)
+for i, (label, example) in enumerate(EXAMPLES.items()):
+    cols[i % 3].button(label, on_click=load_example, args=(example,), use_container_width=True)
+
+st.button("🎲 Pick Random Example", on_click=load_random_example, use_container_width=True)
+
+uploaded_image = st.file_uploader(
+    "Or upload a screenshot (SMS, WhatsApp, email)",
+    type=["png", "jpg", "jpeg", "webp"],
+    help="We will scan the text from your image locally. The image itself is not stored or sent anywhere.",
+)
+if uploaded_image is not None:
+    # Only re-read if it's a new or changed upload
+    file_key = f"ocr_{uploaded_image.name}_{uploaded_image.size}"
+    if st.session_state.get("last_uploaded_file") != file_key:
+        with st.spinner("Scanning text from screenshot..."):
+            extracted = ocr.extract_text_from_image(uploaded_image.getvalue())
+            if extracted:
+                st.session_state["message"] = extracted
+                st.session_state["last_uploaded_file"] = file_key
+                st.rerun()
+            else:
+                st.info("No readable text found in this screenshot. Try pasting the message below.")
 
 message = st.text_area("Message", key="message", height=160)
 
@@ -152,11 +180,27 @@ elif analyze_clicked:
     icon, headline, css = VERDICTS.get(result["verdict"], VERDICTS["suspicious"])
     esc = html.escape
     steps = "".join(f"<li>{esc(a)}</li>" for a in result["actions"])
+    rules = result["rules"]
+    badges = []
+    if result["scam_type"] and result["scam_type"] != "unknown":
+        badges.append(f'<span class="sl-badge danger">🎯 {esc(result["scam_type"])}</span>')
+    for u, b in rules.get("lookalikes", {}).items():
+        badges.append(f'<span class="sl-badge danger">🎣 Spoofed Brand ({esc(b)})</span>')
+    if rules.get("shorteners"):
+        badges.append('<span class="sl-badge warn">🔗 Hidden Link (URL Shortener)</span>')
+    for pat in rules.get("patterns", []):
+        badges.append(f'<span class="sl-badge warn">⚡ {esc(pat)}</span>')
+    if result["verdict"] == "likely safe" and not badges:
+        badges.append('<span class="sl-badge safe">🛡️ No Suspicious Links or Requests</span>')
+
+    badge_html = f'<div class="sl-badges">{"".join(badges)}</div>' if badges else ""
+
     st.html(
         f'<div class="sl-card sl-verdict {css}">'
         f'<div class="sl-head"><span class="sl-icon" aria-hidden="true">{VERDICT_ICONS[icon]}</span>'
         f'<span class="sl-title">{headline}</span></div>'
         f'<p class="sl-reason">{esc(result["reasoning"])}</p>'
+        f'{badge_html}'
         + "</div>"
     )
     explain_card(result)
