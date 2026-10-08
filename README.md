@@ -1,107 +1,146 @@
-# 🔍 Second Look
+# Second Look
 
-> **ForgeHacks 2026 — AI + Cybersecurity Track**  
-> An accessible, privacy-first scam detection & incident recovery platform for everyday people. Built for non-technical users, vulnerable seniors, and busy families before they click, pay, or reply.
+A scam-message checker for older people and the family who look out for them. Built for ForgeHacks 2026, AI + Cybersecurity track (helping people recognise, verify and respond to scams, impersonation and fraud).
 
----
+You paste a suspicious message or upload a screenshot. Second Look gives a plain-language verdict with the evidence highlighted, tells you what to do next, and helps you warn family or report it. Personal details are masked on your own computer before anything is sent to the AI model.
 
-## 💡 The Problem & Real-World Impact
-Cybercriminals steal billions every year through phishing, impersonation, and fake delivery/banking texts. When everyday or non-technical people receive suspicious SMS, emails, or WhatsApp messages, they face two huge problems:
-1. **Fear and uncertainty**: They don't know who to ask, or feel embarrassed.
-2. **Post-incident panic**: If they already clicked or paid, they don't know the immediate defensive steps to take within the critical first hour.
+## Who it is for
 
-**Second Look** gives users a secure "second opinion" on suspicious messages, explains tricky red flags in plain English, and provides structured recovery plans if they already took the bait.
+People who get a text, email or WhatsApp message and are not sure whether it is genuine, and the relatives who get asked "is this a scam?". It uses large, readable text, plain wording and a calm tone.
 
----
+## Features
 
-## 🚀 Key Features
+**Check a message.** Local rule checks (bare domains, link shorteners, lookalike domains of known brands, urgency and payment wording) run alongside an AI model (Qwen3-32B served by Featherless). The result is a verdict, a risk score, the exact phrases in the message that raised concern (highlighted), and signal badges. A phrase is only shown as evidence if it really appears in the message.
 
-* **📸 On-Device Screenshot OCR**:
-  - Non-technical users rarely copy-paste dangerous links. Users can simply upload a screenshot of any SMS, WhatsApp conversation, or email.
-  - Text is extracted locally using `rapidocr-onnxruntime` — **the screenshot never touches the cloud or any external server**.
-* **🛡️ Privacy Shield (`redact.py`)**:
-  - Automatically sanitizes PII (Credit Cards with Luhn validation, IBANs, Bank Sort Codes & Account Numbers, Passcodes/OTPs, Phone Numbers, Emails, SSNs/National Insurance Numbers) using non-colliding sentinel tokens before calling AI models.
-* **🧠 Hybrid Fail-Safe Intelligence (Rule Heuristics + LLM)**:
-  - Powered by **Qwen3-32B via Featherless AI**.
-  - **Defensive escalation**: Even if an LLM is tricked by persuasive text, rule-based heuristics (typosquatting, lookalike homoglyphs, URL shorteners, urgency triggers) automatically escalate the score to prevent dangerous false-negatives.
-  - **Offline/Fail-Safe Fallback**: If network fails or API quotas run out, rule engines provide immediate standalone protection.
-* **🏷️ Visual Threat Vector Radar**:
-  - Displays instant badge pills highlighting active vectors: *Spoofed Brand*, *Hidden Link*, *Urgency Trigger*, *Financial Extortion*.
-* **🚨 Victim Incident Response & One-Click Bank Log**:
-  - Step-by-step interactive triage for users who already clicked, entered cards, or sent money.
-  - Generates a downloadable **Formal Incident Action Log (`.txt`)** ready to hand to bank fraud departments or police (Action Fraud / 7726 / FTC).
-* **👨‍👩‍👧 Family Warning Generator & Plain-English Explainer**:
-  - Drafts custom warning messages for parents, grandparents, or group chats.
-  - Explains technical risks in accessible, jargon-free words.
-* **🎨 10 Accessible Modern Themes**:
-  - Mathematically verified for WCAG AAA/AA contrast standards ($\ge 4.5:1$ text contrast, $\ge 3:1$ element visibility), complete with a **Larger Text & Buttons** switch for seniors.
+**Screenshot upload.** The text in a screenshot is read on your computer with an OCR library and placed in the message box, where you can review and edit it. It is then treated like pasted text, including masking. The app does not save the image. Screenshot input was not part of the accuracy testing. If the OCR library is not installed, the app still runs and you can paste text instead.
 
----
+**Privacy shield.** On by default. Before anything is sent to the model, it masks email addresses, phone numbers (UK and US), card numbers (Luhn-valid), sort code and account numbers, IBANs, US Social Security and UK National Insurance numbers, one-time codes near keywords, and emails, phone numbers and codes inside link query strings. It runs locally.
 
-## 🏗️ Architecture & Pipeline
+**Explain it simply and large-text mode.** Rewrites the verdict in plain language. The output is checked (no links, no advice to delete) and replaced with fixed wording if it fails. A large-text and large-buttons switch is available.
+
+**Warn my family.** Drafts a short message you can forward to relatives. The draft is checked (no links, no digits, no domains) and falls back to a fixed template per scam type if it fails.
+
+**Report it for me.** Builds a report from a local template with an optional AI summary. The sender, link and message text never reach the model. Report channels for the UK and US are listed by type (text, email, fraud). The report downloads as a .txt file.
+
+**Smart handoff.** After a check, suggests the most relevant next page. The scenario choice is deterministic, and the AI only picks action IDs from a fixed whitelist. Its input is capped and masked first.
+
+**Already clicked or paid?** A fixed checklist of steps by situation. No AI model is used. You can download an action log containing the country, the actions you ticked and the checklist status. It contains no message text, sender or link.
+
+**Is it really them?** A fixed guide for checking whether a caller or sender is genuine, including safe-word advice and a note that caller ID can be faked. No AI model is used.
+
+**Link inspector.** Breaks a link into its parts and flags deceptive subdomains, lookalike domains and unusual endings. It analyses the text of the link only and never opens it.
+
+**Spot the Scam quiz.** Fixed training scenarios at three levels, with instant explanations. Training only; it does not use the model.
+
+**How accurate is it?** Shows the measured results below, with caveats.
+
+**About and privacy.** Fixed text describing what leaves your computer and what the app stores.
+
+**Themes.** 13 colour themes (Rose Pine is the default). Automated tests check that button and pill text meets a 4.5:1 contrast ratio and that checkbox, radio and progress fills meet 3:1 against the page background. This is not a full accessibility audit of every screen.
+
+## Design principle
+
+- AI helps understand and draft. Fixed, checked content gives safety-critical advice.
+- Every AI output is post-checked, with a fixed fallback if it fails.
+- Rules can raise a verdict (for example from "likely safe" to "suspicious") but never lower it.
+- Text from the message is treated as untrusted input throughout.
+
+## Architecture
 
 ```mermaid
 flowchart TD
-    A["User Input: Screenshot or Text"] --> B["On-Device Local OCR (RapidOCR)"]
-    B --> C["Local Privacy Shield (redact.py)"]
-    C -->|Sanitized Text| D["Rules Engine (rules.py)"]
-    C -->|Sanitized Text| E["Featherless AI (Qwen3-32B)"]
-    D --> F["Hybrid Verdict Synthesizer"]
-    E --> F
-    F -->|Escalation Safeguards| G["Interactive Results Card"]
-    G --> H["Visual Threat Radar"]
-    G --> I["Jargon-Free Explainer"]
-    G --> J["Family Warning Generator"]
-    G --> K["Incident Response / Bank Pack"]
+  A[Pasted text] --> C
+  S[Screenshot] --> B[OCR on your computer]
+  B --> C[Message box: you can review and edit]
+  C --> D{Privacy shield on? default: on}
+  D -->|on| E[redact.py masks personal details]
+  D -->|off| F[Text to check]
+  E --> F
+  F --> G[Local rules: rules.py]
+  F --> H[AI model: Qwen3-32B via Featherless<br/>the step that sends text off your computer]
+  G --> I[Merge: rules can raise a verdict, never lower it]
+  H --> J[Post-checks: evidence must appear in the message]
+  J --> I
+  H -. model unavailable .-> K[Rules-only fallback]
+  K --> I
+  I --> L[Result: verdict, evidence, signal badges]
+  L --> M[Explain it simply]
+  L --> N[Warn my family]
+  L --> O[Report it for me]
+  L --> P[Already clicked or paid?<br/>fixed checklist and action log]
 ```
 
----
+## Measured results
 
-## ⚡ Quickstart & Setup
+Measured on a second set of 50 fictional messages written by an AI (22 scams, 28 legitimate) that the prompt was never tuned on.
 
-### 1. Prerequisites
-- Python 3.10+ (tested on Python 3.14)
+| Configuration | Accuracy | Precision | Recall | F1 | Errors |
+|---|---|---|---|---|---|
+| Rules only | 58% | 100% | 5% | 0.09 | 0 |
+| Model only | 94% | 95% | 90% | 0.92 | 3 |
+| Full app (rules + model) | 92% | 95% | 86% | 0.91 | 0 |
 
-### 2. Install Dependencies
-```bash
-git clone https://github.com/your-username/second-look.git
+The full app caught 19 of 22 scams and wrongly flagged 1 of 28 legitimate messages. The model-only figure is over the 47 messages that were scored; 3 had API errors. Rules-only is low partly because the test messages use invented brand names, which the brand allowlist does not know.
+
+The prompt was tuned using a first set of 60 messages. Before tuning, the full app wrongly flagged 13 of 20 legitimate messages in that set. Those earlier numbers are tuning history, not an unseen test.
+
+Caveats:
+
+- Small sample with wide uncertainty.
+- Fictional, AI-written messages, not real ones.
+- Measured before later hardening changes (token budget, retries, tag stripping, link query masking). The prompt text was not changed.
+- Measured on pasted text without the privacy shield. Screenshot input was not evaluated.
+- Not tested on other languages.
+- The three missed scams were early-stage openers (two "wrong number" messages and one romance opener) that contain no request yet.
+
+## Security and privacy
+
+- Message text is placed in delimiters and marked as untrusted in every prompt. Closing-tag tricks are stripped.
+- Earlier model output used in later prompts is also marked as untrusted.
+- Evidence phrases from the model must appear in the message, or they are dropped.
+- The app stores nothing and logs nothing. An optional developer switch, SECOND_LOOK_DEBUG=1, prints diagnostics to the terminal; it is off by default.
+- When you run a check, the (masked, if the shield is on) message text is sent to the model provider, Featherless. How they handle it is covered by their own privacy policy.
+- If the model is unavailable, the app falls back to local rules only and tells the user.
+
+## Limitations
+
+- It can be wrong, in both directions. A "likely safe" result is not a guarantee.
+- Early-stage scams with no request yet are the hardest to catch.
+- Brand lookalike checks use a fixed allowlist of brands.
+- Tested only on English text and on fictional messages.
+- OCR can misread text, so check the message box after uploading a screenshot.
+- Masking uses pattern matching and may miss unusual formats.
+
+## How to run
+
+Requires Python 3.10 or later (developed on 3.14).
+
+```
+git clone https://github.com/Cxyna/second-look.git
 cd second-look
 python -m venv .venv
-# On Windows:
-.venv\Scripts\activate
-# On macOS/Linux:
-source .venv/bin/activate
-
+.venv\Scripts\activate          # Windows
+source .venv/bin/activate       # macOS or Linux
 pip install -r requirements.txt
 ```
 
-### 3. Environment Configuration
-Create a `.env` file in the project root:
-```env
-FEATHERLESS_API_KEY="your-featherless-api-key"
-FEATHERLESS_MODEL="Qwen/Qwen3-32B"
-```
-*(Note: If no API key is provided, the app automatically runs in rule-based fallback mode!)*
+Copy `.env.example` to `.env` and add your Featherless API key as `FEATHERLESS_API_KEY`. Without a key, the app runs in rules-only mode.
 
-### 4. Run the Application
-```bash
+```
 streamlit run app.py
-```
-
-### 5. Run the Test Suite
-Second Look includes a comprehensive automated test suite with **358 passing tests**:
-```bash
 pytest
 ```
 
----
+To rerun the evaluation (calls the API and takes around 20 minutes):
 
-## 🏆 ForgeHacks 2026 Submission Summary
+```
+python eval/run_eval.py --dataset eval/fresh.json --split dev
+```
 
-| Requirement | Details |
-| :--- | :--- |
-| **Track** | **AI + Cybersecurity** |
-| **Target Users** | Everyday internet users, vulnerable seniors, non-technical families |
-| **AI Technologies** | Qwen3-32B (via Featherless AI), Computer Vision OCR (`rapidocr-onnxruntime`) |
-| **Defensive Security** | Prompt-injection stripping (`strip_tags`), PII redaction shield, fail-safe rule escalation, zero data retention |
-| **Testing** | 358 unit and integration tests passing in ~3.6s |
+## Built during ForgeHacks 2026
+
+Built from 5 October 2026 during the event. Nothing existed before 3 October. Tools: Python, Streamlit, Qwen3-32B served by Featherless, and Claude Code and other AI assistants for planning, code generation and review. All evaluation messages are fictional and written by an AI.
+
+## Responsible use
+
+Second Look is not legal or financial advice and does not replace your bank, the police or a trusted person. It can be wrong. If you have lost money, contact your bank straight away.
