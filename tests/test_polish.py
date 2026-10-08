@@ -44,3 +44,35 @@ def test_highlight_escapes_html() -> None:
     out = highlight(msg, ["</mark>", "<script>"])
     assert "<script>" not in out and "&lt;script&gt;" in out
     assert out.count("</mark>") == 2 and "&lt;/mark&gt;" in out
+
+
+SAFE_BADGE = "No warning signs found by our checks"
+
+
+def _render_check(monkeypatch, verdict: str, **rule_overrides) -> str:
+    from streamlit.testing.v1 import AppTest
+    import analyzer
+
+    rules = {"score": 0, "shorteners": [], "lookalikes": {}, "patterns": [], **rule_overrides}
+    result = {
+        "verdict": verdict, "scam_type": "unknown", "notice": "", "reasoning": "r",
+        "actions": [], "evidence_phrases": [], "rules": rules,
+    }
+    monkeypatch.setattr(analyzer, "analyze", lambda _text: result)
+    at = AppTest.from_file(str(ROOT / "pages_" / "check.py"), default_timeout=30)
+    at.run()
+    at.text_area(key="message").set_value("hello").run()
+    next(b for b in at.button if b.label == "Analyze").click().run()
+    assert not at.exception
+    return "".join(str(e.value) for e in at.get("html"))
+
+
+def test_safe_badge_wording_and_verdict_restriction(monkeypatch) -> None:
+    src = (ROOT / "pages_" / "check.py").read_text(encoding="utf-8")
+    assert "No Suspicious Links or Requests" not in src
+
+    assert SAFE_BADGE in _render_check(monkeypatch, "likely safe")
+    for verdict in ("likely scam", "suspicious", "unknown"):
+        assert SAFE_BADGE not in _render_check(monkeypatch, verdict)
+    # a clean "likely safe" with a rule signal must not claim "no warning signs"
+    assert SAFE_BADGE not in _render_check(monkeypatch, "likely safe", patterns=["urgency"])

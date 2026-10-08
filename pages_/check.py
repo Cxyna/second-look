@@ -191,7 +191,7 @@ elif analyze_clicked:
     for pat in rules.get("patterns", []):
         badges.append(f'<span class="sl-badge warn">⚡ {esc(pat)}</span>')
     if result["verdict"] == "likely safe" and not badges:
-        badges.append('<span class="sl-badge safe">🛡️ No Suspicious Links or Requests</span>')
+        badges.append('<span class="sl-badge safe">🛡️ No warning signs found by our checks</span>')
 
     badge_html = f'<div class="sl-badges">{"".join(badges)}</div>' if badges else ""
 
